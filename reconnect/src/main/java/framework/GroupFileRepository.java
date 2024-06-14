@@ -1,19 +1,27 @@
 package framework;
 
+import domain.group.Group;
+import domain.group.GroupRepository;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import domain.group.Group;
-import domain.group.GroupRepository;
-
 public class GroupFileRepository implements GroupRepository {
 
     private static final String DELIMITER = ",";
     private final List<Group> groups = new ArrayList<>();
+    private final String filePath;
+    private final String fileName;
 
     public GroupFileRepository(final String filePath, final String fileName) {
+        this.filePath = filePath;
+        this.fileName = fileName;
+        loadGroups(filePath, fileName);
+    }
+
+    private void loadGroups(String filePath, String fileName) {
         List<String> lines = new ArrayList<>();
         try {
             lines = FileRepositoryUtils.readLines(filePath, fileName);
@@ -36,6 +44,10 @@ public class GroupFileRepository implements GroupRepository {
                 .build());
     }
 
+    private String groupToLine(Group group) {
+        return group.getId() + "," + group.getName() + "," + group.getFrequencyInDays();
+    }
+
     @Override
     public Optional<Group> findById(final String id) {
         return groups.stream().filter(group -> group.getId().equals(id)).findFirst();
@@ -53,21 +65,31 @@ public class GroupFileRepository implements GroupRepository {
 
     @Override
     public Group save(final Group group) {
-        return null;
-    }
-
-    @Override
-    public Group update(final Group group) {
-        return null;
+        deleteById(group.getId());
+        groups.add(group);
+        return group;
     }
 
     @Override
     public Group deleteById(final String id) {
-        return null;
+        Optional<Group> matchingGroup = groups.stream().filter(savedGroup -> id.equals(savedGroup.getId())).findFirst();
+        if (matchingGroup.isPresent()) {
+            groups.remove(matchingGroup.get());
+        }
+        return matchingGroup.orElse(null);
     }
 
     @Override
     public Group deleteByName(final String name) {
-        return null;
+        Optional<Group> matchingGroup = groups.stream().filter(savedGroup -> name.equals(savedGroup.getName())).findFirst();
+        if (matchingGroup.isPresent()) {
+            groups.remove(matchingGroup.get());
+        }
+        return matchingGroup.orElse(null);
+    }
+
+    public void commit() throws IOException {
+        List<String> lines = groups.stream().map(this::groupToLine).toList();
+        FileRepositoryUtils.appendLines(lines, filePath, fileName);
     }
 }

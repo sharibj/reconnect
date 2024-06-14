@@ -12,8 +12,6 @@ public interface GroupRepository {
 
     Group save(Group group);
 
-    Group update(Group group);
-
     Group deleteById(String id);
 
     Group deleteByName(String name);
