@@ -1,18 +1,33 @@
 package framework;
 
-import domain.group.Group;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import domain.group.Group;
 
 class GroupFileRepositoryTest {
 
-    GroupFileRepository repository = new GroupFileRepository("src/test/resources/", "groups.csv");
+    public static final String FILE_PATH = "src/test/resources/";
+    public static final String FILE_NAME = "groups.csv";
+    GroupFileRepository repository;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
+        writer.append("id1, friends, 3\nid2, family, 6");
+        writer.close();
+        repository = new GroupFileRepository(FILE_PATH, FILE_NAME);
+    }
 
     @Test
     void whenGetById_thenReturnGroup() {
@@ -115,26 +130,23 @@ class GroupFileRepositoryTest {
     @Test
     void whenCommit_thenPersistChangesToFile() throws IOException {
         // given
-        String fileName = "tmpTestFile.csv";
-        String filePath = "src/test/resources/";
-
-        GroupFileRepository newRepository = new GroupFileRepository(filePath, fileName);
-
+        FileRepositoryUtils.appendLines(List.of(), FILE_PATH, FILE_NAME);
+        GroupFileRepository newRepository = new GroupFileRepository(FILE_PATH, FILE_NAME);
         Group group1 = Group.builder().name("test1").frequencyInDays(1).build();
         Group group2 = Group.builder().name("test2").frequencyInDays(2).build();
-
         newRepository.save(group1);
         newRepository.save(group2);
 
-        List<String> lines = FileRepositoryUtils.readLines(filePath, fileName);
+        List<String> lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(0, lines.size());
 
         // when
         newRepository.commit();
 
         // then
-        lines = FileRepositoryUtils.readLines(filePath, fileName);
+        lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-
+        assertEquals(group1.getId() + ",test1,1", lines.get(0));
+        assertEquals(group2.getId() + ",test2,2", lines.get(1));
     }
 }
