@@ -1,19 +1,23 @@
 package application;
 
-import java.util.Set;
-import domain.group.Group;
-import domain.group.GroupDomainService;
-import domain.group.GroupRepository;
-import framework.GroupFileRepository;
+import java.util.concurrent.Callable;
 
-public class ShellApplication {
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
 
-    GroupRepository groupRepository = new GroupFileRepository("src/main/resources/", "groups.csv");
-    GroupDomainService groupDomainService = new GroupDomainService(groupRepository);
+@Command(name = "reconnect", subcommands = { GroupCommand.class }, mixinStandardHelpOptions = true, version = "checksum 4.0",
+        description = "Coming Soon")
+public class ShellApplication implements Callable<Integer> {
 
-    public void listGroups() {
-        Set<Group> allGroups = groupDomainService.getAll();
-        System.out.println("Groups: (" + allGroups.size() + ")\n");
-        allGroups.stream().map(Group::toHumanReadableString).forEach(group -> System.out.println(group + "\n"));
+
+    @Override
+    public Integer call() throws Exception {
+        System.out.println("ShellApplication Called");
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        int rc = new CommandLine(new ShellApplication()).execute(args);
+        System.exit(rc);
     }
 }
