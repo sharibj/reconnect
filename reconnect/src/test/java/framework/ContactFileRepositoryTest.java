@@ -24,8 +24,8 @@ class ContactFileRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
-        writer.append("id1, sharib\n");
-        writer.append("id2, jafari\n");
+        writer.append("sharib\n");
+        writer.append("jafari\n");
         writer.close();
         repository = new ContactFileRepository(FILE_PATH, FILE_NAME);
 
@@ -39,25 +39,9 @@ class ContactFileRepositoryTest {
         repository.save(contact);
 
         // then
-        Optional<Contact> optionalContact = repository.findById(contact.getId());
+        Optional<Contact> optionalContact = repository.find(contact.getNickName());
         assertTrue(optionalContact.isPresent());
     }*/
-
-
-    @Test
-    void whenGetById_thenReturnContact() {
-        // given
-        String id = "id1";
-
-        // when
-        Optional<Contact> contactOptional = repository.findById(id);
-
-        // then
-        assertTrue(contactOptional.isPresent());
-        Contact contact = contactOptional.get();
-        assertEquals("id1", contact.getId());
-        assertEquals("sharib", contact.getNickName());
-    }
 
     @Test
     void whenGetByName_thenReturnContact() {
@@ -65,12 +49,11 @@ class ContactFileRepositoryTest {
         String name = "sharib";
 
         // when
-        Optional<Contact> contactOptional = repository.findByName(name);
+        Optional<Contact> contactOptional = repository.find(name);
 
         // then
         assertTrue(contactOptional.isPresent());
         Contact contact = contactOptional.get();
-        assertEquals("id1", contact.getId());
         assertEquals("sharib", contact.getNickName());
 
     }
@@ -92,7 +75,7 @@ class ContactFileRepositoryTest {
         repository.save(contact);
 
         // then
-        assertEquals(contact, repository.findByName("testSave").get());
+        assertEquals(contact, repository.find("testSave").get());
     }
 
     @Test
@@ -100,45 +83,28 @@ class ContactFileRepositoryTest {
         // given
         Contact contact = Contact.builder().nickName("testUpdate").build();
         repository.save(contact);
-        Contact updatedContact = Contact.builder().id(contact.getId()).nickName("new testUpdate").build();
+        Contact updatedContact = Contact.builder().nickName("new testUpdate").build();
         // when
         repository.save(updatedContact);
 
         // then
-        assertEquals(updatedContact, repository.findById(contact.getId()).get());
+        assertEquals(updatedContact, repository.find(updatedContact.getNickName()).get());
 
     }
-
-    @Test
-    void whenDeleteById_thenDeleteContact() {
-        // given
-        Contact contact = Contact.builder().nickName("testDelete").build();
-        repository.save(contact);
-        Optional<Contact> contactOptional = repository.findById(contact.getId());
-        assertTrue(contactOptional.isPresent());
-
-        // when
-        repository.deleteById(contact.getId());
-
-        // then
-        contactOptional = repository.findById(contact.getId());
-        assertTrue(contactOptional.isEmpty());
-    }
-
 
     @Test
     void whenDeleteByName_thenDeleteContact() {
         // given
         Contact contact = Contact.builder().nickName("testDelete").build();
         repository.save(contact);
-        Optional<Contact> contactOptional = repository.findById(contact.getId());
+        Optional<Contact> contactOptional = repository.find(contact.getNickName());
         assertTrue(contactOptional.isPresent());
 
         // when
-        repository.deleteByName(contact.getNickName());
+        repository.delete(contact.getNickName());
 
         // then
-        contactOptional = repository.findById(contact.getId());
+        contactOptional = repository.find(contact.getNickName());
         assertTrue(contactOptional.isEmpty());
     }
 
@@ -161,8 +127,8 @@ class ContactFileRepositoryTest {
         // then
         lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-        assertEquals(contact1.getId() + ",test1", lines.get(0));
-        assertEquals(contact2.getId() + ",test2", lines.get(1));
+        assertEquals("test1", lines.get(0));
+        assertEquals("test2", lines.get(1));
     }
 
 

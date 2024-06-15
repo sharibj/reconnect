@@ -30,6 +30,5 @@ class ContactTest {
 
         //then
         assertEquals("sharib", contact.nickName);
-        assertTrue(StringUtils.isNotBlank(contact.id));
     }
 }
