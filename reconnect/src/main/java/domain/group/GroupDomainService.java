@@ -1,5 +1,6 @@
 package domain.group;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -13,13 +14,14 @@ public class GroupDomainService {
         this.repository = repository;
     }
 
-    public Group addGroup(String name) {
-        //@TODO check if name already exists and throw exception if yes
-        return repository.save(Group.builder().name(name).frequencyInDays(DEFAULT_FREQUENCY).build());
+    public Group addGroup(String name) throws IOException {
+        return addGroup(name, DEFAULT_FREQUENCY);
     }
 
-    public Group addGroup(String name, Integer frequencyInDays) {
-        //@TODO check if name already exists and throw exception if yes
+    public Group addGroup(String name, Integer frequencyInDays) throws IOException {
+        if (repository.findByName(name).isPresent()) {
+            throw new IOException("Group with name " + name + " already exists");
+        }
         return repository.save(Group.builder().name(name).frequencyInDays(frequencyInDays).build());
     }
 

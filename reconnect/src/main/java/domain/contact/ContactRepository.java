@@ -12,8 +12,6 @@ public interface ContactRepository {
 
     Contact save(Contact contact);
 
-    Contact update(Contact contact);
-
     Contact deleteById(String id);
 
     Contact deleteByName(String nickName);

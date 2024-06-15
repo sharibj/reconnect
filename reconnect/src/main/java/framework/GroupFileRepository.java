@@ -1,12 +1,13 @@
 package framework;
 
-import domain.group.Group;
-import domain.group.GroupRepository;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import domain.group.Group;
+import domain.group.GroupRepository;
 
 public class GroupFileRepository implements GroupRepository {
 
@@ -28,20 +29,20 @@ public class GroupFileRepository implements GroupRepository {
         } catch (IOException exception) {
             // Ignore Exceptions
         }
-        lines.forEach(this::lineToGroup);
+        lines.stream().map(this::lineToGroup).filter(Objects::nonNull).forEach(groups::add);
     }
 
-    private void lineToGroup(String line) {
+    private Group lineToGroup(String line) {
         List<String> tokens = FileRepositoryUtils.readTokens(line, DELIMITER);
         if (tokens.size() != 3) {
             // ignore faulty lines
-            return;
+            return null;
         }
-        groups.add(Group.builder()
+        return Group.builder()
                 .id(tokens.get(0))
                 .name(tokens.get(1))
                 .frequencyInDays(Integer.parseInt(tokens.get(2)))
-                .build());
+                .build();
     }
 
     private String groupToLine(Group group) {
@@ -73,18 +74,14 @@ public class GroupFileRepository implements GroupRepository {
     @Override
     public Group deleteById(final String id) {
         Optional<Group> matchingGroup = groups.stream().filter(savedGroup -> id.equals(savedGroup.getId())).findFirst();
-        if (matchingGroup.isPresent()) {
-            groups.remove(matchingGroup.get());
-        }
+        matchingGroup.ifPresent(groups::remove);
         return matchingGroup.orElse(null);
     }
 
     @Override
     public Group deleteByName(final String name) {
         Optional<Group> matchingGroup = groups.stream().filter(savedGroup -> name.equals(savedGroup.getName())).findFirst();
-        if (matchingGroup.isPresent()) {
-            groups.remove(matchingGroup.get());
-        }
+        matchingGroup.ifPresent(groups::remove);
         return matchingGroup.orElse(null);
     }
 
