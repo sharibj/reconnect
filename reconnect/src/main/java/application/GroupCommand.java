@@ -5,17 +5,18 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import domain.group.Group;
-import domain.group.GroupDomainService;
-import domain.group.GroupRepository;
 import framework.GroupFileRepository;
+import framework.GroupFileService;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @Command(name = "group")
 public class GroupCommand implements Callable<Integer> {
-    GroupRepository groupRepository = new GroupFileRepository("src/main/resources/", "groups.csv");
-    GroupDomainService groupDomainService = new GroupDomainService(groupRepository);
+    GroupFileRepository groupRepository = new GroupFileRepository("src/main/resources/", "groups.csv");
+    GroupFileService groupService = new GroupFileService(groupRepository);
 
+    //region list
     @Command(name = "list")
     public Integer list(
             @Option(names = { "-i" }, arity = "0..1", paramLabel = "GROUP_ID") String id,
@@ -31,36 +32,65 @@ public class GroupCommand implements Callable<Integer> {
 
     private Integer listById(final String id) {
         try {
-            Group group = groupDomainService.getById(id);
-            System.out.println(group.toHumanReadableString());
+            Group group = groupService.getById(id);
+            ShellApplication.println(group.toHumanReadableString());
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            ShellApplication.println(e.getMessage());
             return 1;
         }
-        return null;
+        return 0;
     }
 
     private Integer listByName(final String name) {
         try {
-            Group group = groupDomainService.getByName(name);
-            System.out.println(group.toHumanReadableString());
+            Group group = groupService.getByName(name);
+            ShellApplication.println(group.toHumanReadableString());
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            ShellApplication.println(e.getMessage());
             return 1;
         }
         return null;
     }
 
     private Integer listAll() {
-        Set<Group> allGroups = groupDomainService.getAll();
-        System.out.println("Groups: (" + allGroups.size() + ")\n");
-        allGroups.stream().map(Group::toHumanReadableString).forEach(group -> System.out.println(group + "\n"));
+        Set<Group> allGroups = groupService.getAll();
+        ShellApplication.println("Groups: (" + allGroups.size() + ")\n");
+        allGroups.stream().map(Group::toHumanReadableString).forEach(group -> ShellApplication.println(group + "\n"));
+        return 0;
+    }
+    //endregion
+
+    //region add
+    @Command(name = "add")
+    public Integer add(@Parameters(arity = "1", paramLabel = "GROUP_NAME") String name,
+            @Parameters(arity = "1", paramLabel = "FREQUENCY_IN_DAYS") Integer frequency) {
+        try {
+            groupService.addGroup(name, frequency);
+        } catch (IOException e) {
+            ShellApplication.println(e.getMessage());
+            return 1;
+        }
         return 0;
     }
 
+    //endregion
+
+    //region remove
+    @Command(name = "remove")
+    public Integer remove(@Parameters(arity = "1", paramLabel = "GROUP_NAME") String name) {
+        try {
+            groupService.removeGroupByName(name);
+        } catch (IOException e) {
+            ShellApplication.println(e.getMessage());
+            return 1;
+        }
+        return 0;
+    }
+
+    //endregion
     @Override
     public Integer call() throws Exception {
-        System.out.println("group command called");
+        ShellApplication.println("group command called");
         return 0;
     }
 }

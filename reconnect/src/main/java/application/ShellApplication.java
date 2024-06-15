@@ -12,8 +12,12 @@ public class ShellApplication implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        System.out.println("ShellApplication Called");
+        println("ShellApplication Called");
         return 0;
+    }
+
+    static void println(String line) {
+        System.out.println(line);
     }
 
     public static void main(String[] args) {
