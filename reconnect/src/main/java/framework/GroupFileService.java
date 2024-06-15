@@ -13,38 +13,26 @@ public class GroupFileService extends GroupDomainService {
     }
 
     @Override
-    public void addGroup(final String name, final Integer frequencyInDays) throws IOException {
-        super.addGroup(name, frequencyInDays);
+    public void add(final String name, final Integer frequencyInDays) throws IOException {
+        super.add(name, frequencyInDays);
         fileRepository.commit();
     }
 
     @Override
-    public void addGroup(final String name) throws IOException {
-        super.addGroup(name);
+    public void add(final String name) throws IOException {
+        super.add(name);
         fileRepository.commit();
     }
 
     @Override
-    public void updateByName(final String name, final int frequencyInDays) throws IOException {
-        super.updateByName(name, frequencyInDays);
+    public void update(final String name, final int frequencyInDays) throws IOException {
+        super.update(name, frequencyInDays);
         fileRepository.commit();
     }
 
     @Override
-    public void updateById(final String id, final String name, final int frequencyInDays) throws IOException {
-        super.updateById(id, name, frequencyInDays);
-        fileRepository.commit();
-    }
-
-    @Override
-    public void removeGroupById(final String id) throws IOException {
-        super.removeGroupById(id);
-        fileRepository.commit();
-    }
-
-    @Override
-    public void removeGroupByName(final String name) throws IOException {
-        super.removeGroupByName(name);
+    public void remove(final String name) throws IOException {
+        super.remove(name);
         fileRepository.commit();
     }
 }

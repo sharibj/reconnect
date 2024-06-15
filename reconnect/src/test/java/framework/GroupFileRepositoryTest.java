@@ -24,24 +24,9 @@ class GroupFileRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
-        writer.append("id1, friends, 3\nid2, family, 6");
+        writer.append("friends, 3\nfamily, 6");
         writer.close();
         repository = new GroupFileRepository(FILE_PATH, FILE_NAME);
-    }
-
-    @Test
-    void whenGetById_thenReturnGroup() {
-        // given
-        String id = "id1";
-
-        // when
-        Optional<Group> groupOptional = repository.findById(id);
-
-        // then
-        assertTrue(groupOptional.isPresent());
-        Group group = groupOptional.get();
-        assertEquals("id1", group.getId());
-        assertEquals("friends", group.getName());
     }
 
     @Test
@@ -50,12 +35,11 @@ class GroupFileRepositoryTest {
         String name = "friends";
 
         // when
-        Optional<Group> groupOptional = repository.findByName(name);
+        Optional<Group> groupOptional = repository.find(name);
 
         // then
         assertTrue(groupOptional.isPresent());
         Group group = groupOptional.get();
-        assertEquals("id1", group.getId());
         assertEquals("friends", group.getName());
 
     }
@@ -77,7 +61,7 @@ class GroupFileRepositoryTest {
         repository.save(group);
 
         // then
-        assertEquals(group, repository.findByName("testSave").get());
+        assertEquals(group, repository.find("testSave").get());
     }
 
     @Test
@@ -85,29 +69,13 @@ class GroupFileRepositoryTest {
         // given
         Group group = Group.builder().name("testUpdate").frequencyInDays(10).build();
         repository.save(group);
-        Group updatedGroup = Group.builder().id(group.getId()).name("new testUpdate").frequencyInDays(12).build();
+        Group updatedGroup = Group.builder().name("new testUpdate").frequencyInDays(12).build();
         // when
         repository.save(updatedGroup);
 
         // then
-        assertEquals(updatedGroup, repository.findById(group.getId()).get());
+        assertEquals(updatedGroup, repository.find(updatedGroup.getName()).get());
 
-    }
-
-    @Test
-    void whenDeleteById_thenDeleteGroup() {
-        // given
-        Group group = Group.builder().name("testDelete").frequencyInDays(10).build();
-        repository.save(group);
-        Optional<Group> groupOptional = repository.findById(group.getId());
-        assertTrue(groupOptional.isPresent());
-
-        // when
-        repository.deleteById(group.getId());
-
-        // then
-        groupOptional = repository.findById(group.getId());
-        assertTrue(groupOptional.isEmpty());
     }
 
 
@@ -116,14 +84,14 @@ class GroupFileRepositoryTest {
         // given
         Group group = Group.builder().name("testDelete").frequencyInDays(10).build();
         repository.save(group);
-        Optional<Group> groupOptional = repository.findById(group.getId());
+        Optional<Group> groupOptional = repository.find(group.getName());
         assertTrue(groupOptional.isPresent());
 
         // when
-        repository.deleteByName(group.getName());
+        repository.delete(group.getName());
 
         // then
-        groupOptional = repository.findById(group.getId());
+        groupOptional = repository.find(group.getName());
         assertTrue(groupOptional.isEmpty());
     }
 
@@ -146,7 +114,7 @@ class GroupFileRepositoryTest {
         // then
         lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-        assertEquals(group1.getId() + ",test1,1", lines.get(0));
-        assertEquals(group2.getId() + ",test2,2", lines.get(1));
+        assertEquals("test1,1", lines.get(0));
+        assertEquals("test2,2", lines.get(1));
     }
 }
