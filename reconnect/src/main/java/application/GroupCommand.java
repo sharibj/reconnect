@@ -15,6 +15,12 @@ public class GroupCommand implements Callable<Integer> {
     GroupFileRepository groupRepository = new GroupFileRepository("src/main/resources/", "groups.csv");
     GroupFileService groupService = new GroupFileService(groupRepository);
 
+    @Override
+    public Integer call() {
+        ShellApplication.println("group command called");
+        return 0;
+    }
+
     //region list
     @Command(name = "list")
     public Integer list(
@@ -58,7 +64,20 @@ public class GroupCommand implements Callable<Integer> {
         }
         return 0;
     }
+    //endregion
 
+    //region update
+    @Command(name = "update")
+    public Integer update(@Parameters(arity = "1", paramLabel = "GROUP_NAME") String name,
+            @Parameters(arity = "1", paramLabel = "FREQUENCY_IN_DAYS") Integer frequency) {
+        try {
+            groupService.update(name, frequency);
+        } catch (IOException e) {
+            ShellApplication.println(e.getMessage());
+            return 1;
+        }
+        return 0;
+    }
     //endregion
 
     //region remove
@@ -72,11 +91,6 @@ public class GroupCommand implements Callable<Integer> {
         }
         return 0;
     }
-
     //endregion
-    @Override
-    public Integer call() throws Exception {
-        ShellApplication.println("group command called");
-        return 0;
-    }
+
 }
