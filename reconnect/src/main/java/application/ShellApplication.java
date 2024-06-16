@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "reconnect", subcommands = { GroupCommand.class }, mixinStandardHelpOptions = true, version = "checksum 4.0",
+@Command(name = "reconnect", subcommands = { GroupCommand.class, ContactCommand.class }, mixinStandardHelpOptions = true, version = "checksum 4.0",
         description = "Coming Soon")
 public class ShellApplication implements Callable<Integer> {
 

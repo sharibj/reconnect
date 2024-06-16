@@ -10,6 +10,13 @@ public class Contact {
     @NonNull
     String nickName;
     @Builder.Default
+    @NonNull
     String group = "";
     ContactDetails details;
+
+
+    public String toHumanReadableString() {
+        return "Name = " + this.nickName + "\n" +
+                "Group = " + this.group;
+    }
 }

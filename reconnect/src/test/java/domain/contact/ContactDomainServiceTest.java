@@ -130,6 +130,7 @@ class ContactDomainServiceTest {
         // given
         Contact contact = Contact.builder().nickName("sharib").group("family").build();
         Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
+        Mockito.when(groupRepository.find("friends")).thenReturn(Optional.ofNullable(Group.builder().name("friends").build()));
         // when
         service.update(Contact.builder().nickName("sharib").group("friends").build());
         // then
@@ -143,6 +144,7 @@ class ContactDomainServiceTest {
         // given
         Contact contact = Contact.builder().nickName("sharib").group("family").build();
         Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
+        Mockito.when(groupRepository.find("family")).thenReturn(Optional.ofNullable(Group.builder().name("family").build()));
         // when
         service.update(Contact.builder().nickName("sharib").group("family").build());
         // then
@@ -159,6 +161,16 @@ class ContactDomainServiceTest {
         assertThrows(IOException.class, () -> service.update(Contact.builder().nickName("sharib").build()));
     }
 
+    @Test
+    void whenUpdateContactWithNonExistingGroup_thenThrowError() {
+        // when
+        Mockito.when(groupRepository.find("family")).thenReturn(Optional.empty());
+        // then
+        assertThrows(
+                IOException.class,
+                () -> service.update(Contact.builder().nickName("sharib").group("family").build())
+        );
+    }
     //endregion
 
     //region get contact

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import domain.group.Group;
 import domain.group.GroupRepository;
 
 public class ContactDomainService {
@@ -39,6 +38,9 @@ public class ContactDomainService {
     }
 
     public void update(final Contact contact) throws IOException {
+        if (isNotBlank(contact.group) && groupRepository.find(contact.group).isEmpty()) {
+            throw new IOException("Group with name = " + contact.group + " does not exist.");
+        }
         Contact existingContact = get(contact.getNickName());
         if (existingContact.getGroup().equals(contact.group)) {
             return;
@@ -51,6 +53,7 @@ public class ContactDomainService {
                 .find(nickName)
                 .orElseThrow(() -> new IOException("Contact with name = " + nickName + " does not exist."));
     }
+
     public Set<Contact> getAll() {
         return new HashSet<>(repository.findAll());
     }
