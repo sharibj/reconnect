@@ -9,6 +9,7 @@ import picocli.CommandLine.Command;
         description = "Coming Soon")
 public class ShellApplication implements Callable<Integer> {
 
+    static final String FILE_PATH = "reconnect/";
 
     @Override
     public Integer call() throws Exception {

@@ -3,6 +3,7 @@ package domain.contact;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import domain.group.GroupRepository;
 
@@ -48,10 +49,19 @@ public class ContactDomainService {
         repository.save(contact);
     }
 
-    public Contact get(final String nickName) throws IOException {
+    public Contact get(final String groupName) throws IOException {
         return repository
-                .find(nickName)
-                .orElseThrow(() -> new IOException("Contact with name = " + nickName + " does not exist."));
+                .find(groupName)
+                .orElseThrow(() -> new IOException("Group with name = " + groupName + " does not exist."));
+        //TODO Consider returning optional instead of throwing error
+    }
+
+    //TODO add test
+    public Set<Contact> getAll(final String groupName) throws IOException {
+        groupRepository
+                .find(groupName)
+                .orElseThrow(() -> new IOException("Group with name = " + groupName + " does not exist."));
+        return repository.findAll().stream().filter(contact -> contact.group.equals(groupName)).collect(Collectors.toSet());
     }
 
     public Set<Contact> getAll() {

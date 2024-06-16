@@ -1,5 +1,7 @@
 package application;
 
+import static application.ShellApplication.FILE_PATH;
+
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -9,12 +11,13 @@ import framework.ContactFileRepository;
 import framework.ContactFileService;
 import framework.GroupFileRepository;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "contact")
 public class ContactCommand implements Callable<Integer> {
-    GroupFileRepository groupRepository = new GroupFileRepository("src/main/resources/", "groups.csv");
-    ContactFileRepository contactRepository = new ContactFileRepository("src/main/resources/", "contacts.csv");
+    GroupFileRepository groupRepository = new GroupFileRepository(FILE_PATH, "groups.csv");
+    ContactFileRepository contactRepository = new ContactFileRepository(FILE_PATH, "contacts.csv");
     ContactFileService contactService = new ContactFileService(contactRepository, groupRepository);
 
     @Override
@@ -26,12 +29,27 @@ public class ContactCommand implements Callable<Integer> {
     //region list
     @Command(name = "list")
     public Integer list(
-            @Parameters(arity = "0..1", paramLabel = "CONTACT_NICKNAME") String nickName) {
+            @Option(names = { "-n", "nickname" }, arity = "0..1", paramLabel = "CONTACT_NICKNAME") String nickName,
+            @Option(names = { "-g", "group" }, arity = "0..1", paramLabel = "GROUP_NAME") String group) {
         if (nickName != null) {
             return listByName(nickName.trim());
+        } else if (group != null) {
+            return listByGroup(group.trim());
         } else {
             return listAll();
         }
+    }
+
+    private Integer listByGroup(final String group) {
+        try {
+            Set<Contact> allContacts = contactService.getAll(group);
+            ShellApplication.println("Contacts: (" + allContacts.size() + ")\n");
+            allContacts.stream().map(Contact::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
+        } catch (IOException e) {
+            ShellApplication.println(e.getMessage());
+            return 1;
+        }
+        return 0;
     }
 
 
@@ -43,7 +61,7 @@ public class ContactCommand implements Callable<Integer> {
             ShellApplication.println(e.getMessage());
             return 1;
         }
-        return null;
+        return 0;
     }
 
     private Integer listAll() {

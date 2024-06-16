@@ -1,5 +1,7 @@
 package application;
 
+import static application.ShellApplication.FILE_PATH;
+
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -12,7 +14,7 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "group")
 public class GroupCommand implements Callable<Integer> {
-    GroupFileRepository groupRepository = new GroupFileRepository("src/main/resources/", "groups.csv");
+    GroupFileRepository groupRepository = new GroupFileRepository(FILE_PATH, "groups.csv");
     GroupFileService groupService = new GroupFileService(groupRepository);
 
     @Override

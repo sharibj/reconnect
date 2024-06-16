@@ -1,6 +1,13 @@
 package framework;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -11,13 +18,14 @@ class FileRepositoryUtils {
     }
 
     public static List<String> readLines(final String filePath, final String fileName) throws IOException {
-        List<String> lines = List.of();
+        Files.createDirectories(Paths.get(filePath));
         File file = new File(filePath, fileName);
 
         //TODO: Test file creation
         if (!file.isFile() && !file.createNewFile()) {
             throw new IOException("Error creating new file: " + file.getAbsolutePath());
         }
+        List<String> lines = List.of();
 
         BufferedReader reader = new BufferedReader(new FileReader(file));
         try {
@@ -38,6 +46,7 @@ class FileRepositoryUtils {
     }
 
     public static void appendLines(List<String> lines, String filePath, String fileName) throws IOException {
+        Files.createDirectories(Paths.get(filePath));
         File file = new File(filePath, fileName);
         if (!file.isFile() && !file.createNewFile()) {
             throw new IOException("Error creating new file: " + file.getAbsolutePath());
