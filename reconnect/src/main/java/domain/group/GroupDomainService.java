@@ -42,7 +42,8 @@ public class GroupDomainService {
     }
 
     public void update(final String name, final int frequencyInDays) throws IOException {
-        if (get(name).getFrequencyInDays().equals(frequencyInDays)) {
+        Group existingGroup = get(name);
+        if (existingGroup.getFrequencyInDays().equals(frequencyInDays)) {
             return;
         }
         Group updatedGroup = Group.builder()

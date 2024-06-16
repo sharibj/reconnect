@@ -1,7 +1,5 @@
 package domain.contact;
 
-import java.util.UUID;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;

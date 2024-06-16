@@ -85,14 +85,7 @@ class GroupDomainServiceTest {
                 () -> service.add("family", 100)
         );
     }
-
-    @Test
-    void whenAddGroup_thenCommitChanges() {
-        // given
-        // when
-        // then
-    }
-
+    
     //endregion
 
     //region remove group
