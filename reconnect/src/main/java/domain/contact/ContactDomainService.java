@@ -31,4 +31,11 @@ public class ContactDomainService {
     private boolean isNotBlank(final String str) {
         return null != str && !str.isBlank();
     }
+
+    public void remove(final String nickName) throws IOException {
+        if (repository.find(nickName).isEmpty()) {
+            throw new IOException("Group with nickname = " + nickName + " doesn't exist");
+        }
+        repository.delete(nickName);
+    }
 }

@@ -85,41 +85,41 @@ class ContactDomainServiceTest {
     }
 
     //endregion
-/*
+
 
     //region remove contact
     @Test
     void whenCalledWithNameOfAnExistingContact_thenRemoveContact() throws IOException {
         // given
-        Contact contact = Contact.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
-        Mockito.when(repository.find(contact.getName())).thenReturn(Optional.of(contact));
+        Contact contact = Contact.builder().nickName("sharib").build();
+        Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
 
         // when
-        service.remove(contact.getName());
+        service.remove(contact.getNickName());
 
         // then
-        Mockito.verify(repository, Mockito.times(1)).delete(contact.getName());
+        Mockito.verify(repository, Mockito.times(1)).delete(contact.getNickName());
 
     }
 
     @Test
     void whenCalledWithNameOfANonExistingContact_thenThrowException() throws IOException {
         // given
-        String name = "family";
+        String nickName = "sharib";
 
         // when
-        Mockito.when(repository.find(name)).thenReturn(Optional.empty());
+        Mockito.when(repository.find(nickName)).thenReturn(Optional.empty());
 
         // then
         assertThrows(
                 IOException.class,
-                () -> service.remove(name)
+                () -> service.remove(nickName)
         );
 
     }
 
     //endregion
-
+/*
     //region update contact
 
     @Test
