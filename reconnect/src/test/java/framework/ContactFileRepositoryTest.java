@@ -31,18 +31,6 @@ class ContactFileRepositoryTest {
 
     }
 
-/*    @Test
-    void whenContactDoesNotExist_thenSaveContact() {
-        // given
-
-        // when
-        repository.save(contact);
-
-        // then
-        Optional<Contact> optionalContact = repository.find(contact.getNickName());
-        assertTrue(optionalContact.isPresent());
-    }*/
-
     @Test
     void whenGetByName_thenReturnContact() {
         // given

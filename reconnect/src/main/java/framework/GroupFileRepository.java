@@ -45,7 +45,7 @@ public class GroupFileRepository implements GroupRepository {
     }
 
     private String groupToLine(Group group) {
-        return group.getName() + "," + group.getFrequencyInDays();
+        return group.getName() + DELIMITER + group.getFrequencyInDays();
     }
 
     @Override

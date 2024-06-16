@@ -43,7 +43,7 @@ public class ContactFileRepository implements ContactRepository {
     }
 
     private String contactToLine(Contact contact) {
-        return contact.getNickName() + "," + contact.getGroup();
+        return contact.getNickName() + DELIMITER + contact.getGroup();
     }
 
 
