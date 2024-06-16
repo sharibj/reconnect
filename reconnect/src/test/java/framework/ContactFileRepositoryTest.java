@@ -24,8 +24,8 @@ class ContactFileRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
-        writer.append("sharib\n");
-        writer.append("jafari\n");
+        writer.append("sharib, family\n");
+        writer.append("jafari, friends\n");
         writer.close();
         repository = new ContactFileRepository(FILE_PATH, FILE_NAME);
 
@@ -55,6 +55,7 @@ class ContactFileRepositoryTest {
         assertTrue(contactOptional.isPresent());
         Contact contact = contactOptional.get();
         assertEquals("sharib", contact.getNickName());
+        assertEquals("family", contact.getGroup());
 
     }
 
@@ -81,9 +82,9 @@ class ContactFileRepositoryTest {
     @Test
     void whenContactDoesExists_thenUpdateContact() {
         // given
-        Contact contact = Contact.builder().nickName("testUpdate").build();
+        Contact contact = Contact.builder().nickName("testUpdate").group("testGroup").build();
         repository.save(contact);
-        Contact updatedContact = Contact.builder().nickName("new testUpdate").build();
+        Contact updatedContact = Contact.builder().nickName("testUpdate").group("newTestGroup").build();
         // when
         repository.save(updatedContact);
 
@@ -113,8 +114,8 @@ class ContactFileRepositoryTest {
         // given
         FileRepositoryUtils.appendLines(List.of(), FILE_PATH, FILE_NAME);
         ContactFileRepository newRepository = new ContactFileRepository(FILE_PATH, FILE_NAME);
-        Contact contact1 = Contact.builder().nickName("test1").build();
-        Contact contact2 = Contact.builder().nickName("test2").build();
+        Contact contact1 = Contact.builder().nickName("test1").group("group1").build();
+        Contact contact2 = Contact.builder().nickName("test2").group("group2").build();
         newRepository.save(contact1);
         newRepository.save(contact2);
 
@@ -127,8 +128,8 @@ class ContactFileRepositoryTest {
         // then
         lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-        assertEquals("test1", lines.get(0));
-        assertEquals("test2", lines.get(1));
+        assertEquals("test1,group1", lines.get(0));
+        assertEquals("test2,group2", lines.get(1));
     }
 
 

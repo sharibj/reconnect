@@ -37,13 +37,13 @@ public class ContactFileRepository implements ContactRepository {
             // ignore faulty lines
             return null;
         }
-        return Contact.builder()
-                .nickName(tokens.get(0))
-                .build();
+        Contact.ContactBuilder contactBuilder = Contact.builder()
+                .nickName(tokens.get(0));
+        return tokens.size() == 2 ? contactBuilder.group(tokens.get(1)).build() : contactBuilder.build();
     }
 
     private String contactToLine(Contact contact) {
-        return contact.getNickName();
+        return contact.getNickName() + "," + contact.getGroup();
     }
 
 
