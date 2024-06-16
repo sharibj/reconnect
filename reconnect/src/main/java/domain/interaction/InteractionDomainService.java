@@ -1,8 +1,9 @@
 package domain.interaction;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import domain.contact.ContactRepository;
 
@@ -54,15 +55,16 @@ public class InteractionDomainService {
                 .orElseThrow(() -> new IOException("Interaction with id = " + id + " does not exist."));
     }
 
-    public Set<Interaction> getAll(final String contact) throws IOException {
-        if(contactRepository.find(contact).isEmpty()){
+    public List<Interaction> getAll(final String contact) throws IOException {
+        if (contactRepository.find(contact).isEmpty()) {
             throw new IOException("Contact with nickname = " + contact + " does not exist.");
         }
-        return new HashSet<>(interactionRepository.findAll(contact));
+        //TODO add test for sorting
+        return (new HashSet<>(interactionRepository.findAll(contact))).stream().sorted(Comparator.comparing(Interaction::getTimeStamp).reversed()).toList();
     }
 
-    public Set<Interaction> getAll() {
-        return new HashSet<>(interactionRepository.findAll());
+    public List<Interaction> getAll() {
+        return (new HashSet<>(interactionRepository.findAll())).stream().sorted(Comparator.comparing(Interaction::getTimeStamp).reversed()).toList();
     }
 
 }

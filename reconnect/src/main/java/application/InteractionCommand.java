@@ -3,6 +3,7 @@ package application;
 import static application.ShellApplication.FILE_PATH;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -40,7 +41,7 @@ public class InteractionCommand implements Callable<Integer> {
 
     private Integer listByContact(final String contact) {
         try {
-            Set<Interaction> interactions = interactionService.getAll(contact);
+            List<Interaction> interactions = interactionService.getAll(contact);
             ShellApplication.println("Interactions: (" + interactions.size() + ")\n");
             interactions.forEach(interaction -> ShellApplication.println(interaction.toHumanReadableString() + "\n"));
         } catch (IOException e) {
@@ -51,7 +52,7 @@ public class InteractionCommand implements Callable<Integer> {
     }
 
     private Integer listAll() {
-        Set<Interaction> allInteractions = interactionService.getAll();
+        List<Interaction> allInteractions = interactionService.getAll();
         ShellApplication.println("Interactions: (" + allInteractions.size() + ")\n");
         allInteractions.stream().map(Interaction::toHumanReadableString).forEach(interaction -> ShellApplication.println(interaction + "\n"));
         return 0;

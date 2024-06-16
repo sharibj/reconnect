@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.any;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import domain.contact.Contact;
 import domain.contact.ContactRepository;
+
 @ExtendWith(MockitoExtension.class)
 class InteractionDomainServiceTest {
     @Mock
@@ -158,7 +158,7 @@ class InteractionDomainServiceTest {
 
         Mockito.when(interactionRepository.findAll()).thenReturn(List.of(sharibInteraction, jafariInteraction, sharibInteraction));
         // when
-        Set<Interaction> allInteractions = service.getAll();
+        List<Interaction> allInteractions = service.getAll();
 
         // then
         assertEquals(2, allInteractions.size());
@@ -196,7 +196,7 @@ class InteractionDomainServiceTest {
         Mockito.when(contactRepository.find("sharib")).thenReturn(Optional.ofNullable(Contact.builder().nickName("sharib").build()));
         Mockito.when(interactionRepository.findAll("sharib")).thenReturn(List.of(interaction1, interaction2));
         // when
-        Set<Interaction> interactions = service.getAll("sharib");
+        List<Interaction> interactions = service.getAll("sharib");
         // then
         assertEquals(2, interactions.size());
         assertTrue(interactions.containsAll(List.of(interaction1, interaction2)));
