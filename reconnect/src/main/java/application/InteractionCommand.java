@@ -9,6 +9,7 @@ import framework.ContactFileRepository;
 import framework.InteractionFileRepository;
 import framework.InteractionFileService;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "interaction")
@@ -39,7 +40,7 @@ public class InteractionCommand implements Callable<Integer> {
         try {
             Set<Interaction> interactions = interactionService.getAll(contact);
             ShellApplication.println("Interactions: (" + interactions.size() + ")\n");
-            interactions.forEach(interaction -> ShellApplication.println(interaction.toHumanReadableString()+"\n"));
+            interactions.forEach(interaction -> ShellApplication.println(interaction.toHumanReadableString() + "\n"));
         } catch (IOException e) {
             ShellApplication.println(e.getMessage());
             return 1;
@@ -75,20 +76,23 @@ public class InteractionCommand implements Callable<Integer> {
     //region update
     @Command(name = "update")
     public Integer update(@Parameters(arity = "1", paramLabel = "ID") String id,
-            @Parameters(arity = "1", paramLabel = "CONTACT_NICKNAME") String contactName,
-            @Parameters(arity = "0..1", paramLabel = "NOTES") String notes) {
-        if (null == notes) {
-            notes = "";
-        }
+            @Option(names = { "-c", "--contact" }, arity = "0..1", paramLabel = "CONTACT_NICKNAME") String contactName,
+            @Option(names = { "-n", "--notes" }, arity = "0..1", paramLabel = "NOTES") String notes) {
+
         try {
-            interactionService.update(Interaction.builder().id(id).contact(contactName).notes(notes).build());
-        } catch (IOException e) {
+            Interaction interaction = interactionService.get(id);
+            Interaction.InteractionBuilder interactionBuilder = Interaction.builder().id(id);
+            interactionBuilder = contactName == null ? interactionBuilder.contact(interaction.getContact()) : interactionBuilder.contact(contactName);
+            interactionBuilder = notes == null ? interactionBuilder.notes(interaction.getNotes()) : interactionBuilder.notes(notes);
+            interactionService.update(interactionBuilder.build());
+        } catch (
+                IOException e) {
             ShellApplication.println(e.getMessage());
             return 1;
         }
         return 0;
     }
-    //endregion
+//endregion
 
     //region remove
     @Command(name = "remove")
@@ -101,6 +105,6 @@ public class InteractionCommand implements Callable<Integer> {
         }
         return 0;
     }
-    //endregion
+//endregion
 
 }
