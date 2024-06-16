@@ -2,6 +2,7 @@ package domain.contact;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -35,7 +36,7 @@ class ContactDomainServiceTest {
     @Test
     void whenAddContactWithName_thenSaveContact() throws IOException {
         // given
-        service.add("sharib");
+        service.add(Contact.builder().nickName("sharib").build());
 
         // when
         Mockito.verify(repository).save(contactCaptor.capture());
@@ -49,7 +50,7 @@ class ContactDomainServiceTest {
     void whenAddContactWithNameAndExistingGroup_thenSaveContact() throws IOException {
         // given
         Mockito.when(groupRepository.find("family")).thenReturn(Optional.ofNullable(Group.builder().name("family").frequencyInDays(7).build()));
-        service.add("sharib", "family");
+        service.add(Contact.builder().nickName("sharib").group("family").build());
 
         // when
         Mockito.verify(repository).save(contactCaptor.capture());
@@ -68,7 +69,7 @@ class ContactDomainServiceTest {
         // then
         assertThrows(
                 IOException.class,
-                () -> service.add("sharib")
+                () -> service.add(Contact.builder().nickName("sharib").build())
         );
     }
 
@@ -80,7 +81,7 @@ class ContactDomainServiceTest {
         // then
         assertThrows(
                 IOException.class,
-                () -> service.add("sharib", "family")
+                () -> service.add(Contact.builder().nickName("sharib").group("family").build())
         );
     }
 
@@ -119,29 +120,29 @@ class ContactDomainServiceTest {
     }
 
     //endregion
-/*
+
     //region update contact
 
     @Test
     void whenContactWithNameExists_thenUpdateContact() throws IOException {
         // given
-        Contact contact = Contact.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
-        Mockito.when(repository.find(contact.getName())).thenReturn(Optional.of(contact));
+        Contact contact = Contact.builder().nickName("sharib").group("family").build();
+        Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
         // when
-        service.update("family", 20);
+        service.update(Contact.builder().nickName("sharib").group("friends").build());
         // then
         Mockito.verify(repository, Mockito.times(1)).save(contactCaptor.capture());
         Contact capturedContact = contactCaptor.getValue();
-        assertEquals(20, capturedContact.getFrequencyInDays().intValue());
+        assertEquals("friends", capturedContact.getGroup());
     }
 
     @Test
     void whenContactDoesNotChange_thenDoNotUpdateContact() throws IOException {
         // given
-        Contact contact = Contact.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
-        Mockito.when(repository.find(contact.getName())).thenReturn(Optional.of(contact));
+        Contact contact = Contact.builder().nickName("sharib").group("family").build();
+        Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
         // when
-        service.update("family", DEFAULT_FREQUENCY);
+        service.update(Contact.builder().nickName("sharib").group("family").build());
         // then
         Mockito.verify(repository, Mockito.times(0)).save(any());
     }
@@ -149,16 +150,16 @@ class ContactDomainServiceTest {
     @Test
     void whenContactWithNameDoesNotExist_thenThrowExceptionOnUpdate() {
         // given
-        String contactName = "family";
+        String contactName = "sharib";
         // when
         Mockito.when(repository.find(contactName)).thenReturn(Optional.empty());
         // then
-        assertThrows(IOException.class, () -> service.update(contactName, DEFAULT_FREQUENCY));
+        assertThrows(IOException.class, () -> service.update(Contact.builder().nickName("sharib").build()));
     }
-
 
     //endregion
 
+/*
     //region get contact
 
     @Test

@@ -14,18 +14,14 @@ public class ContactDomainService {
         this.groupRepository = groupRepository;
     }
 
-    public void add(final String nickName) throws IOException {
-        add(nickName, "");
-    }
-
-    public void add(final String nickName, final String group) throws IOException {
-        if (repository.find(nickName).isPresent()) {
-            throw new IOException("Contact with nickname = " + nickName + " already exists.");
+    public void add(final Contact contact) throws IOException {
+        if (repository.find(contact.getNickName()).isPresent()) {
+            throw new IOException("Contact with nickname = " + contact.getNickName() + " already exists.");
         }
-        if (isNotBlank(group) && groupRepository.find(group).isEmpty()) {
-            throw new IOException("Group with name = " + group + " does not exist.");
+        if (isNotBlank(contact.group) && groupRepository.find(contact.group).isEmpty()) {
+            throw new IOException("Group with name = " + contact.group + " does not exist.");
         }
-        repository.save(Contact.builder().nickName(nickName).group(group).build());
+        repository.save(contact);
     }
 
     private boolean isNotBlank(final String str) {
@@ -37,5 +33,19 @@ public class ContactDomainService {
             throw new IOException("Group with nickname = " + nickName + " doesn't exist");
         }
         repository.delete(nickName);
+    }
+
+    public void update(final Contact contact) throws IOException {
+        Contact existingContact = get(contact.getNickName());
+        if (existingContact.getGroup().equals(contact.group)) {
+            return;
+        }
+        repository.save(contact);
+    }
+
+    public Contact get(final String nickName) throws IOException {
+        return repository
+                .find(nickName)
+                .orElseThrow(() -> new IOException("Contact with name = " + nickName + " does not exist."));
     }
 }
