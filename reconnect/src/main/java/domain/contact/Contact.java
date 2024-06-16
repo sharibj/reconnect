@@ -9,6 +9,7 @@ import lombok.NonNull;
 public class Contact {
     @NonNull
     String nickName;
-    String group;
+    @Builder.Default
+    String group = "";
     ContactDetails details;
 }

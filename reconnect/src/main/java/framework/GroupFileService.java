@@ -2,6 +2,7 @@ package framework;
 
 import java.io.IOException;
 
+import domain.group.Group;
 import domain.group.GroupDomainService;
 
 public class GroupFileService extends GroupDomainService {
@@ -13,20 +14,14 @@ public class GroupFileService extends GroupDomainService {
     }
 
     @Override
-    public void add(final String name, final Integer frequencyInDays) throws IOException {
-        super.add(name, frequencyInDays);
+    public void add(final Group group) throws IOException {
+        super.add(group);
         fileRepository.commit();
     }
 
     @Override
-    public void add(final String name) throws IOException {
-        super.add(name);
-        fileRepository.commit();
-    }
-
-    @Override
-    public void update(final String name, final int frequencyInDays) throws IOException {
-        super.update(name, frequencyInDays);
+    public void update(final Group group) throws IOException {
+        super.update(group);
         fileRepository.commit();
     }
 

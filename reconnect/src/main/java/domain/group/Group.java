@@ -7,10 +7,12 @@ import lombok.NonNull;
 @Builder
 @Getter
 public class Group {
+    private static final Integer DEFAULT_FREQUENCY = 7;
     @NonNull
     String name;
     @NonNull
-    Integer frequencyInDays;
+    @Builder.Default
+    Integer frequencyInDays = DEFAULT_FREQUENCY;
 
     public String toHumanReadableString() {
         return "Name = " + this.name + "\n" +

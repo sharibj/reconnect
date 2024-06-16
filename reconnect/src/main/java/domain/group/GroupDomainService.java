@@ -6,22 +6,18 @@ import java.util.Set;
 
 public class GroupDomainService {
 
-    private static final Integer DEFAULT_FREQUENCY = 7;
+
     GroupRepository repository;
 
     public GroupDomainService(GroupRepository repository) {
         this.repository = repository;
     }
 
-    public void add(String name) throws IOException {
-        add(name, DEFAULT_FREQUENCY);
-    }
-
-    public void add(String name, Integer frequencyInDays) throws IOException {
-        if (repository.find(name).isPresent()) {
-            throw new IOException("Group with name " + name + " already exists");
+    public void add(Group group) throws IOException {
+        if (repository.find(group.getName()).isPresent()) {
+            throw new IOException("Group with name " + group.getName() + " already exists");
         }
-        repository.save(Group.builder().name(name).frequencyInDays(frequencyInDays).build());
+        repository.save(Group.builder().name(group.getName()).frequencyInDays(group.getFrequencyInDays()).build());
     }
 
     public void remove(String name) throws IOException {
@@ -41,14 +37,14 @@ public class GroupDomainService {
                 .orElseThrow(() -> new IOException("Group with name = " + name + " does not exist."));
     }
 
-    public void update(final String name, final int frequencyInDays) throws IOException {
-        Group existingGroup = get(name);
-        if (existingGroup.getFrequencyInDays().equals(frequencyInDays)) {
+    public void update(Group group) throws IOException {
+        Group existingGroup = get(group.getName());
+        if (existingGroup.getFrequencyInDays().equals(group.getFrequencyInDays())) {
             return;
         }
         Group updatedGroup = Group.builder()
-                .name(name)
-                .frequencyInDays(frequencyInDays)
+                .name(group.getName())
+                .frequencyInDays(group.getFrequencyInDays())
                 .build();
         repository.save(updatedGroup);
     }

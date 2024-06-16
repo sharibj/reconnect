@@ -57,7 +57,7 @@ public class GroupCommand implements Callable<Integer> {
     public Integer add(@Parameters(arity = "1", paramLabel = "GROUP_NAME") String name,
             @Parameters(arity = "1", paramLabel = "FREQUENCY_IN_DAYS") Integer frequency) {
         try {
-            groupService.add(name, frequency);
+            groupService.add(Group.builder().name(name).frequencyInDays(frequency).build());
         } catch (IOException e) {
             ShellApplication.println(e.getMessage());
             return 1;
@@ -71,7 +71,7 @@ public class GroupCommand implements Callable<Integer> {
     public Integer update(@Parameters(arity = "1", paramLabel = "GROUP_NAME") String name,
             @Parameters(arity = "1", paramLabel = "FREQUENCY_IN_DAYS") Integer frequency) {
         try {
-            groupService.update(name, frequency);
+            groupService.update(Group.builder().name(name).frequencyInDays(frequency).build());
         } catch (IOException e) {
             ShellApplication.println(e.getMessage());
             return 1;

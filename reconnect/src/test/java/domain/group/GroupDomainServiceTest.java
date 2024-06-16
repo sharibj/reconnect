@@ -36,7 +36,7 @@ class GroupDomainServiceTest {
     @Test
     void whenAddGroupWithName_thenSaveWithDefaultFrequency() throws IOException {
         // given
-        service.add("family");
+        service.add(Group.builder().name("family").build());
 
         // when
         Mockito.verify(repository).save(groupCaptor.capture());
@@ -51,7 +51,7 @@ class GroupDomainServiceTest {
     void whenAddGroupWithNameAndFrequency_thenSaveWithCustomFrequency() throws IOException {
         // given
         Integer customFrequency = 100;
-        service.add("family", customFrequency);
+        service.add(Group.builder().name("family").frequencyInDays(customFrequency).build());
 
         // when
         Mockito.verify(repository).save(groupCaptor.capture());
@@ -70,7 +70,7 @@ class GroupDomainServiceTest {
         // then
         assertThrows(
                 IOException.class,
-                () -> service.add("family")
+                () -> service.add(Group.builder().name("family").build())
         );
     }
 
@@ -82,10 +82,10 @@ class GroupDomainServiceTest {
         // then
         assertThrows(
                 IOException.class,
-                () -> service.add("family", 100)
+                () -> service.add(Group.builder().name("family").frequencyInDays(100).build())
         );
     }
-    
+
     //endregion
 
     //region remove group
@@ -129,7 +129,7 @@ class GroupDomainServiceTest {
         Group group = Group.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
         Mockito.when(repository.find(group.getName())).thenReturn(Optional.of(group));
         // when
-        service.update("family", 20);
+        service.update(Group.builder().name("family").frequencyInDays(20).build());
         // then
         Mockito.verify(repository, Mockito.times(1)).save(groupCaptor.capture());
         Group capturedGroup = groupCaptor.getValue();
@@ -142,7 +142,7 @@ class GroupDomainServiceTest {
         Group group = Group.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
         Mockito.when(repository.find(group.getName())).thenReturn(Optional.of(group));
         // when
-        service.update("family", DEFAULT_FREQUENCY);
+        service.update(Group.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build());
         // then
         Mockito.verify(repository, Mockito.times(0)).save(any());
     }
@@ -154,7 +154,7 @@ class GroupDomainServiceTest {
         // when
         Mockito.when(repository.find(groupName)).thenReturn(Optional.empty());
         // then
-        assertThrows(IOException.class, () -> service.update(groupName, DEFAULT_FREQUENCY));
+        assertThrows(IOException.class, () -> service.update(Group.builder().name(groupName).frequencyInDays(DEFAULT_FREQUENCY).build()));
     }
 
 
