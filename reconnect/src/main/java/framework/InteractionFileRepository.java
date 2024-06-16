@@ -54,7 +54,7 @@ public class InteractionFileRepository implements InteractionRepository {
 
     @Override
     public List<Interaction> findAll(final String contact) {
-        return null;
+        return interactions.stream().filter(interaction -> interaction.getContact().equals(contact)).toList();
     }
 
     @Override

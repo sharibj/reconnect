@@ -53,6 +53,13 @@ class InteractionFileRepositoryTest {
         // then
         assertEquals(2, allInteractions.size());
     }
+    @Test
+    void whenFindAllByContact_thenReturnAllInteractionsForContact() {
+        // when
+        List<Interaction> allInteractions = repository.findAll("sharib");
+        // then
+        assertEquals(1, allInteractions.size());
+    }
 
     @Test
     void whenInteractionDoesNotExist_thenSaveInteraction() {
