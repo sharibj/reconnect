@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.UUID;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 
 @Builder
 @Getter
+@EqualsAndHashCode
 public class Interaction {
     @NonNull
     @Builder.Default
@@ -21,4 +23,11 @@ public class Interaction {
     String notes = "";
     @Builder.Default
     InteractionDetails interactionDetails = new InteractionDetails();
+
+    public String toHumanReadableString() {
+        return "ID = " + this.id + "\n" +
+                "Contact = " + this.contact+ "\n" +
+                "Date = " + new Date(timeStamp)+ "\n" +
+                "Notes = " + this.notes;
+    }
 }

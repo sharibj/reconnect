@@ -39,7 +39,7 @@ public class GroupDomainService {
 
     public void update(Group group) throws IOException {
         Group existingGroup = get(group.getName());
-        if (existingGroup.getFrequencyInDays().equals(group.getFrequencyInDays())) {
+        if (existingGroup.equals(group)) {
             return;
         }
         Group updatedGroup = Group.builder()

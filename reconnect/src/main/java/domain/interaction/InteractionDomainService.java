@@ -42,7 +42,7 @@ public class InteractionDomainService {
             throw new IOException("Contact with nickname = " + interaction.contact + " does not exist.");
         }
         Interaction existingInteraction = get(interaction.id);
-        if (existingInteraction.contact.equals(interaction.contact)) {
+        if (existingInteraction.equals(interaction)) {
             return;
         }
         interactionRepository.save(interaction);

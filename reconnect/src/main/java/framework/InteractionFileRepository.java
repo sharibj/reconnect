@@ -31,15 +31,29 @@ public class InteractionFileRepository implements InteractionRepository {
         lines.stream().map(this::lineToInteraction).filter(Objects::nonNull).forEach(interactions::add);
     }
 
+
     private Interaction lineToInteraction(String line) {
         List<String> tokens = FileRepositoryUtils.readTokens(line, DELIMITER);
         if (tokens.size() < 2) {
             // ignore faulty lines
             return null;
         }
-        Interaction.InteractionBuilder interactionBuilder = Interaction.builder()
-                .id(tokens.get(0)).contact(tokens.get(1));
-        return tokens.size() >= 3 ? interactionBuilder.timeStamp(Long.parseLong(tokens.get(2))).build() : interactionBuilder.build();
+
+        Interaction.InteractionBuilder interactionBuilder = Interaction.builder();
+        for (int i = 0; i < tokens.size(); i++) {
+            interactionBuilder = build(i, tokens.get(i), interactionBuilder);
+        }
+        return interactionBuilder.build();
+    }
+
+    private Interaction.InteractionBuilder build(Integer tokenNumber, String token, Interaction.InteractionBuilder builder) {
+        return switch (tokenNumber) {
+            case 0 -> builder.id(token);
+            case 1 -> builder.contact(token);
+            case 2 -> builder.timeStamp(Long.parseLong(token));
+            case 3 -> builder.notes(token);
+            default -> builder;
+        };
     }
 
     private String interactionToLine(Interaction interaction) {

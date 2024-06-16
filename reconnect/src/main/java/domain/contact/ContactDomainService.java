@@ -42,7 +42,7 @@ public class ContactDomainService {
             throw new IOException("Group with name = " + contact.group + " does not exist.");
         }
         Contact existingContact = get(contact.getNickName());
-        if (existingContact.getGroup().equals(contact.group)) {
+        if (existingContact.equals(contact)) {
             return;
         }
         repository.save(contact);
