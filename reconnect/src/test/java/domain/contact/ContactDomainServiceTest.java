@@ -2,10 +2,13 @@ package domain.contact;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,7 +90,6 @@ class ContactDomainServiceTest {
 
     //endregion
 
-
     //region remove contact
     @Test
     void whenCalledWithNameOfAnExistingContact_thenRemoveContact() throws IOException {
@@ -159,14 +161,13 @@ class ContactDomainServiceTest {
 
     //endregion
 
-/*
     //region get contact
 
     @Test
     void whenGetAll_thenReturnAllContacts() {
         // given
-        Contact familyContact = Contact.builder().name("family").frequencyInDays(1).build();
-        Contact friendsContact = Contact.builder().name("friends").frequencyInDays(1).build();
+        Contact familyContact = Contact.builder().nickName("sharib").group("family").build();
+        Contact friendsContact = Contact.builder().nickName("jafari").group("friends").build();
 
         Mockito.when(repository.findAll()).thenReturn(List.of(familyContact, friendsContact, familyContact));
         // when
@@ -180,10 +181,10 @@ class ContactDomainServiceTest {
     @Test
     void whenContactWithNameExists_thenReturnContactOnGet() throws IOException {
         // given
-        Contact contact = Contact.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
-        Mockito.when(repository.find(contact.getName())).thenReturn(Optional.of(contact));
+        Contact contact = Contact.builder().nickName("family").build();
+        Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
         // when
-        Contact returnedContact = service.get(contact.getName());
+        Contact returnedContact = service.get(contact.getNickName());
         // then
         assertEquals(returnedContact, contact);
     }
@@ -191,13 +192,12 @@ class ContactDomainServiceTest {
     @Test
     void whenContactWithNameDoesNotExist_thenThrowExceptionOnGet() {
         // given
-        String name = "nonExistingName";
+        String nickName = "nonExistingName";
         // when
-        Mockito.when(repository.find(name)).thenReturn(Optional.empty());
+        Mockito.when(repository.find(nickName)).thenReturn(Optional.empty());
         // then
-        assertThrows(IOException.class, () -> service.get(name));
+        assertThrows(IOException.class, () -> service.get(nickName));
     }
     //endregion
-*/
 
 }

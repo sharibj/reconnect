@@ -1,7 +1,10 @@
 package domain.contact;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
+import domain.group.Group;
 import domain.group.GroupRepository;
 
 public class ContactDomainService {
@@ -48,4 +51,8 @@ public class ContactDomainService {
                 .find(nickName)
                 .orElseThrow(() -> new IOException("Contact with name = " + nickName + " does not exist."));
     }
+    public Set<Contact> getAll() {
+        return new HashSet<>(repository.findAll());
+    }
+
 }
