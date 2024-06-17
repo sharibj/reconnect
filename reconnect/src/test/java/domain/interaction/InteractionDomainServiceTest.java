@@ -45,7 +45,7 @@ class InteractionDomainServiceTest {
 
         // then
         Interaction interaction = interactionCaptor.getValue();
-        assertEquals("sharib", interaction.contact);
+        assertEquals("sharib", interaction.getContact());
     }
 
     @Test

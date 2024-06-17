@@ -3,8 +3,11 @@ package application;
 import static application.ShellApplication.FILE_PATH;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import domain.interaction.Interaction;
@@ -43,7 +46,7 @@ public class InteractionCommand implements Callable<Integer> {
         try {
             List<Interaction> interactions = interactionService.getAll(contact);
             ShellApplication.println("Interactions: (" + interactions.size() + ")\n");
-            interactions.forEach(interaction -> ShellApplication.println(interaction.toHumanReadableString() + "\n"));
+            interactions.stream().sorted(Comparator.comparing(Interaction::getTimeStamp).reversed()).forEach(interaction -> ShellApplication.println(interaction.toHumanReadableString() + "\n"));
         } catch (IOException e) {
             ShellApplication.println(e.getMessage());
             return 1;
@@ -54,7 +57,7 @@ public class InteractionCommand implements Callable<Integer> {
     private Integer listAll() {
         List<Interaction> allInteractions = interactionService.getAll();
         ShellApplication.println("Interactions: (" + allInteractions.size() + ")\n");
-        allInteractions.stream().map(Interaction::toHumanReadableString).forEach(interaction -> ShellApplication.println(interaction + "\n"));
+        allInteractions.stream().sorted(Comparator.comparing(Interaction::getTimeStamp).reversed()).map(Interaction::toHumanReadableString).forEach(interaction -> ShellApplication.println(interaction + "\n"));
         return 0;
     }
     //endregion
@@ -62,13 +65,20 @@ public class InteractionCommand implements Callable<Integer> {
     //region add
     @Command(name = "add")
     public Integer add(@Parameters(arity = "1", paramLabel = "CONTACT_NICKNAME") String contact,
-            @Parameters(arity = "0..1", paramLabel = "NOTES") String notes) {
-        if (null == notes) {
-            notes = "";
-        }
+            @Parameters(arity = "0..1", paramLabel = "DATE (dd-mm-yyyy)") String dateString,
+            @Option(names = { "-n", "--notes" }, arity = "0..1", paramLabel = "NOTES") String notes) {
+
         try {
-            interactionService.add(Interaction.builder().contact(contact).notes(notes).build());
-        } catch (IOException e) {
+            if (null == notes) {
+                notes = "";
+            }
+            Date date = new Date();
+            if (null != dateString) {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                date = formatter.parse(dateString);
+            }
+            interactionService.add(Interaction.builder().contact(contact).timeStamp(date.getTime()).notes(notes).build());
+        } catch (Exception e) {
             ShellApplication.println(e.getMessage());
             return 1;
         }
@@ -80,16 +90,18 @@ public class InteractionCommand implements Callable<Integer> {
     @Command(name = "update")
     public Integer update(@Parameters(arity = "1", paramLabel = "ID") String id,
             @Option(names = { "-c", "--contact" }, arity = "0..1", paramLabel = "CONTACT_NICKNAME") String contactName,
+            @Parameters(arity = "0..1", paramLabel = "DATE (dd-mm-yyyy)") String dateString,
             @Option(names = { "-n", "--notes" }, arity = "0..1", paramLabel = "NOTES") String notes) {
 
         try {
             Interaction interaction = interactionService.get(id);
             Interaction.InteractionBuilder interactionBuilder = Interaction.builder().id(id);
             interactionBuilder = contactName == null ? interactionBuilder.contact(interaction.getContact()) : interactionBuilder.contact(contactName);
+            interactionBuilder = dateString == null ? interactionBuilder.timeStamp(interaction.getTimeStamp()) : interactionBuilder.timeStamp(new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH).parse(dateString).getTime());
             interactionBuilder = notes == null ? interactionBuilder.notes(interaction.getNotes()) : interactionBuilder.notes(notes);
             interactionService.update(interactionBuilder.build());
         } catch (
-                IOException e) {
+                Exception e) {
             ShellApplication.println(e.getMessage());
             return 1;
         }

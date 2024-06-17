@@ -10,11 +10,11 @@ import lombok.NonNull;
 @EqualsAndHashCode
 public class Contact {
     @NonNull
-    String nickName;
+    private String nickName;
     @Builder.Default
     @NonNull
-    String group = "";
-    ContactDetails details;
+    private String group = "";
+    private ContactDetails details;
 
 
     public String toHumanReadableString() {

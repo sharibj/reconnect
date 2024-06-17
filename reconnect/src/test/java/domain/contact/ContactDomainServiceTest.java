@@ -46,7 +46,7 @@ class ContactDomainServiceTest {
 
         // then
         Contact contact = contactCaptor.getValue();
-        assertEquals("sharib", contact.nickName);
+        assertEquals("sharib", contact.getNickName());
     }
 
     @Test
@@ -60,8 +60,8 @@ class ContactDomainServiceTest {
 
         // then
         Contact contact = contactCaptor.getValue();
-        assertEquals("sharib", contact.nickName);
-        assertEquals("family", contact.group);
+        assertEquals("sharib", contact.getNickName());
+        assertEquals("family", contact.getGroup());
     }
 
     @Test

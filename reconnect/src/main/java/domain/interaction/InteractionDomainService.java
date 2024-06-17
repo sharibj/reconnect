@@ -18,11 +18,11 @@ public class InteractionDomainService {
     }
 
     public void add(final Interaction interaction) throws IOException {
-        if (interactionRepository.find(interaction.id).isPresent()) {
-            throw new IOException("Interaction with id = " + interaction.id + " already exists.");
+        if (interactionRepository.find(interaction.getId()).isPresent()) {
+            throw new IOException("Interaction with id = " + interaction.getId() + " already exists.");
         }
-        if (isNotBlank(interaction.contact) && contactRepository.find(interaction.contact).isEmpty()) {
-            throw new IOException("Contact with nickname = " + interaction.contact + " does not exist.");
+        if (isNotBlank(interaction.getContact()) && contactRepository.find(interaction.getContact()).isEmpty()) {
+            throw new IOException("Contact with nickname = " + interaction.getContact() + " does not exist.");
         }
         interactionRepository.save(interaction);
     }
@@ -39,10 +39,10 @@ public class InteractionDomainService {
     }
 
     public void update(final Interaction interaction) throws IOException {
-        if (isNotBlank(interaction.contact) && contactRepository.find(interaction.contact).isEmpty()) {
-            throw new IOException("Contact with nickname = " + interaction.contact + " does not exist.");
+        if (isNotBlank(interaction.getContact()) && contactRepository.find(interaction.getContact()).isEmpty()) {
+            throw new IOException("Contact with nickname = " + interaction.getContact() + " does not exist.");
         }
-        Interaction existingInteraction = get(interaction.id);
+        Interaction existingInteraction = get(interaction.getId());
         if (existingInteraction.equals(interaction)) {
             return;
         }

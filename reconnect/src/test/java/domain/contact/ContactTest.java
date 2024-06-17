@@ -29,6 +29,6 @@ class ContactTest {
         Contact contact = Contact.builder().nickName("sharib").build();
 
         //then
-        assertEquals("sharib", contact.nickName);
+        assertEquals("sharib", contact.getNickName());
     }
 }

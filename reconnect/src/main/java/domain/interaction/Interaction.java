@@ -14,15 +14,15 @@ import lombok.NonNull;
 public class Interaction {
     @NonNull
     @Builder.Default
-    String id = UUID.randomUUID().toString();
+    private String id = UUID.randomUUID().toString();
     @NonNull
-    String contact;
+    private String contact;
     @Builder.Default
-    Long timeStamp = new Date().getTime();
+    private Long timeStamp = new Date().getTime();
     @Builder.Default
-    String notes = "";
+    private String notes = "";
     @Builder.Default
-    InteractionDetails interactionDetails = new InteractionDetails();
+    private InteractionDetails interactionDetails = new InteractionDetails();
 
     public String toHumanReadableString() {
         return "ID = " + this.id + "\n" +

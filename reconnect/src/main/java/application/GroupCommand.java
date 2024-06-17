@@ -3,9 +3,11 @@ package application;
 import static application.ShellApplication.FILE_PATH;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import domain.contact.Contact;
 import domain.group.Group;
 import framework.GroupFileRepository;
 import framework.GroupFileService;
@@ -49,7 +51,7 @@ public class GroupCommand implements Callable<Integer> {
     private Integer listAll() {
         Set<Group> allGroups = groupService.getAll();
         ShellApplication.println("Groups: (" + allGroups.size() + ")\n");
-        allGroups.stream().map(Group::toHumanReadableString).forEach(group -> ShellApplication.println(group + "\n"));
+        allGroups.stream().sorted(Comparator.comparing(Group::getName)).map(Group::toHumanReadableString).forEach(group -> ShellApplication.println(group + "\n"));
         return 0;
     }
     //endregion

@@ -3,6 +3,7 @@ package application;
 import static application.ShellApplication.FILE_PATH;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -67,7 +68,7 @@ public class ContactCommand implements Callable<Integer> {
     private Integer listAll() {
         Set<Contact> allContacts = contactService.getAll();
         ShellApplication.println("Contacts: (" + allContacts.size() + ")\n");
-        allContacts.stream().map(Contact::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
+        allContacts.stream().sorted(Comparator.comparing(Contact::getGroup)).map(Contact::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
         return 0;
     }
     //endregion

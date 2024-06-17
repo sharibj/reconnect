@@ -43,8 +43,8 @@ class GroupDomainServiceTest {
 
         // then
         Group group = groupCaptor.getValue();
-        assertEquals("family", group.name);
-        assertEquals(DEFAULT_FREQUENCY, group.frequencyInDays);
+        assertEquals("family", group.getName());
+        assertEquals(DEFAULT_FREQUENCY, group.getFrequencyInDays());
     }
 
     @Test
@@ -58,8 +58,8 @@ class GroupDomainServiceTest {
 
         // then
         Group group = groupCaptor.getValue();
-        assertEquals("family", group.name);
-        assertEquals(customFrequency, group.frequencyInDays);
+        assertEquals("family", group.getName());
+        assertEquals(customFrequency, group.getFrequencyInDays());
     }
 
     @Test
