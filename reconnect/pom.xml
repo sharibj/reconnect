@@ -49,4 +49,32 @@
             <version>4.7.6</version>
         </dependency>
     </dependencies>
+    <build>
+        <!-- To define the plugin version in your parent POM -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>appassembler-maven-plugin</artifactId>
+                    <version>1.10</version>
+                    <configuration>
+                        <programs>
+                            <program>
+                                <mainClass>application.ShellApplication</mainClass>
+                                <id>reconnect</id>
+                            </program>
+                        </programs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <!-- To use the plugin goals in your POM or parent POM -->
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.10</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
