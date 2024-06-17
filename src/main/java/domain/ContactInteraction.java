@@ -24,7 +24,7 @@ public class ContactInteraction {
 
     private Long calculateNextContactTimestamp() {
         Calendar calendar = Calendar.getInstance();
-        if (lastContactedTimestamp != null) {
+        if (lastContactedTimestamp > 0) {
             Date interactionDate = new Date(lastContactedTimestamp);
             calendar.setTime(interactionDate);
             calendar.add(Calendar.DATE, frequencyInDays);
@@ -34,7 +34,7 @@ public class ContactInteraction {
 
     public boolean isOutOfTouch() {
         long currentTimeStamp = Calendar.getInstance().getTime().getTime();
-        return currentTimeStamp > nextContactTimestamp;
+        return currentTimeStamp >= nextContactTimestamp;
     }
 
     public boolean notYetContacted() {
