@@ -1,13 +1,12 @@
 package application;
 
-import static application.ShellApplication.FILE_PATH;
+import static application.ShellApplication.filePath;
 
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import domain.contact.Contact;
 import domain.group.Group;
 import framework.GroupFileRepository;
 import framework.GroupFileService;
@@ -16,7 +15,7 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "group")
 public class GroupCommand implements Callable<Integer> {
-    GroupFileRepository groupRepository = new GroupFileRepository(FILE_PATH, "groups.csv");
+    GroupFileRepository groupRepository = new GroupFileRepository(filePath, "groups.csv");
     GroupFileService groupService = new GroupFileService(groupRepository);
 
     @Override

@@ -1,6 +1,6 @@
 package application;
 
-import static application.ShellApplication.FILE_PATH;
+import static application.ShellApplication.filePath;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -17,8 +17,8 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "contact")
 public class ContactCommand implements Callable<Integer> {
-    GroupFileRepository groupRepository = new GroupFileRepository(FILE_PATH, "groups.csv");
-    ContactFileRepository contactRepository = new ContactFileRepository(FILE_PATH, "contacts.csv");
+    GroupFileRepository groupRepository = new GroupFileRepository(filePath, "groups.csv");
+    ContactFileRepository contactRepository = new ContactFileRepository(filePath, "contacts.csv");
     ContactFileService contactService = new ContactFileService(contactRepository, groupRepository);
 
     @Override

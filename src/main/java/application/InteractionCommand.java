@@ -1,6 +1,6 @@
 package application;
 
-import static application.ShellApplication.FILE_PATH;
+import static application.ShellApplication.filePath;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -20,8 +20,8 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "interaction")
 public class InteractionCommand implements Callable<Integer> {
-    ContactFileRepository contactRepository = new ContactFileRepository(FILE_PATH, "contacts.csv");
-    InteractionFileRepository interactionRepository = new InteractionFileRepository(FILE_PATH, "interactions.csv");
+    ContactFileRepository contactRepository = new ContactFileRepository(filePath, "contacts.csv");
+    InteractionFileRepository interactionRepository = new InteractionFileRepository(filePath, "interactions.csv");
     InteractionFileService interactionService = new InteractionFileService(interactionRepository, contactRepository);
 
     @Override

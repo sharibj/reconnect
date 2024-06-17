@@ -13,34 +13,31 @@ import framework.InteractionFileRepository;
 import framework.InteractionFileService;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Parameters;
 
 @Command(name = "reconnect", subcommands = { GroupCommand.class, ContactCommand.class, InteractionCommand.class }, mixinStandardHelpOptions = true, version = "checksum 4.0",
         description = "Coming Soon")
 public class ShellApplication implements Callable<Integer> {
 
-    static final String FILE_PATH = "reconnect/";
+    @Parameters(defaultValue = "./")
+    static String filePath = "";
     public static final String GROUPS_FILE = "groups.csv";
     public static final String CONTACTS_FILE = "contacts.csv";
     public static final String INTERACTIONS_FILE = "interactions.csv";
 
-    private final ReconnectDomainService reconnectDomainService;
-
-    public ShellApplication() {
-        GroupFileRepository groupRepository = new GroupFileRepository(FILE_PATH, GROUPS_FILE);
-        ContactFileRepository contactRepository = new ContactFileRepository(FILE_PATH, CONTACTS_FILE);
-        InteractionFileRepository interactionRepository = new InteractionFileRepository(FILE_PATH, INTERACTIONS_FILE);
+    @Override
+    public Integer call() {
+        GroupFileRepository groupRepository = new GroupFileRepository(filePath, GROUPS_FILE);
+        ContactFileRepository contactRepository = new ContactFileRepository(filePath, CONTACTS_FILE);
+        InteractionFileRepository interactionRepository = new InteractionFileRepository(filePath, INTERACTIONS_FILE);
 
         GroupFileService groupService = new GroupFileService(groupRepository);
-//      //TODO Consider using group service instead of repository
+        //TODO Consider using group service instead of repository
         ContactFileService contactService = new ContactFileService(contactRepository, groupRepository);
         InteractionFileService interactionService = new InteractionFileService(interactionRepository, contactRepository);
 
-        reconnectDomainService = new ReconnectDomainService(interactionService, contactService, groupService);
-    }
-
-    @Override
-    public Integer call() throws Exception {
-        return listOutOfTouch();
+        ReconnectDomainService reconnectDomainService = new ReconnectDomainService(interactionService, contactService, groupService);
+        return listOutOfTouch(reconnectDomainService);
     }
 
     static void println(String line) {
@@ -52,7 +49,7 @@ public class ShellApplication implements Callable<Integer> {
         System.exit(rc);
     }
 
-    private Integer listOutOfTouch() {
+    private Integer listOutOfTouch(final ReconnectDomainService reconnectDomainService) {
         List<ContactInteraction> outOfTouchList = reconnectDomainService.getOutOfTouchContactList();
         println("Out of touch contacts (" + outOfTouchList.size() + ")\n");
         outOfTouchList.stream().map(ContactInteraction::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));

@@ -119,7 +119,7 @@ class InteractionDomainServiceTest {
         Mockito.when(interactionRepository.find(interaction.getId())).thenReturn(Optional.of(interaction));
         Mockito.when(contactRepository.find("sharib")).thenReturn(Optional.ofNullable(Contact.builder().nickName("sharib").build()));
         // when
-        service.update(Interaction.builder().id(interaction.getId()).contact("sharib").build());
+        service.update(Interaction.builder().id(interaction.getId()).contact("sharib").timeStamp(interaction.getTimeStamp()).build());
         // then
         Mockito.verify(interactionRepository, Mockito.times(0)).save(any());
     }
