@@ -4,6 +4,7 @@ import static application.ShellApplication.filePath;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -42,27 +43,22 @@ public class ContactCommand implements Callable<Integer> {
     }
 
     private Integer listByGroup(final String group) {
-        try {
-            Set<Contact> allContacts = contactService.getAll(group);
-            ShellApplication.println("Contacts: (" + allContacts.size() + ")\n");
-            allContacts.stream().map(Contact::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
-        } catch (IOException e) {
-            ShellApplication.println(e.getMessage());
-            return 1;
-        }
+        Set<Contact> allContacts = contactService.getAll(group);
+        ShellApplication.println("Contacts: (" + allContacts.size() + ")\n");
+        allContacts.stream().map(Contact::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
         return 0;
     }
 
 
     private Integer listByName(final String name) {
-        try {
-            Contact contact = contactService.get(name);
-            ShellApplication.println(contact.toHumanReadableString());
-        } catch (IOException e) {
-            ShellApplication.println(e.getMessage());
+        Optional<Contact> optionalContact = contactService.get(name);
+        if (optionalContact.isPresent()) {
+            ShellApplication.println(optionalContact.get().toHumanReadableString());
+            return 0;
+        } else {
+            ShellApplication.println("Contact not found: " + name);
             return 1;
         }
-        return 0;
     }
 
     private Integer listAll() {

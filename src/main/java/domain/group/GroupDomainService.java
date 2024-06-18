@@ -38,14 +38,8 @@ public class GroupDomainService {
     }
 
     public void update(Group group) throws IOException {
-        Group existingGroup = get(group.getName());
-        if (existingGroup.equals(group)) {
-            return;
+        if (!get(group.getName()).equals(group)) {
+            repository.save(group);
         }
-        Group updatedGroup = Group.builder()
-                .name(group.getName())
-                .frequencyInDays(group.getFrequencyInDays())
-                .build();
-        repository.save(updatedGroup);
     }
 }

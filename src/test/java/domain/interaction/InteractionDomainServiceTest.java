@@ -2,10 +2,10 @@ package domain.interaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,7 +78,7 @@ class InteractionDomainServiceTest {
     }
 
     @Test
-    void whenCalledWithIdOfANonExistingInteraction_thenThrowException() throws IOException {
+    void whenCalledWithIdOfANonExistingInteraction_thenThrowException() {
         // given
         String id = "1234ABCD";
 
@@ -151,18 +151,19 @@ class InteractionDomainServiceTest {
     //region get interaction
 
     @Test
-    void whenGetAll_thenReturnAllInteractions() {
+    void whenGetAll_thenReturnAllInteractionsSortedByTimeStamp() {
         // given
-        Interaction sharibInteraction = Interaction.builder().contact("sharib").build();
-        Interaction jafariInteraction = Interaction.builder().contact("jafari").build();
+        Interaction sharibInteraction = Interaction.builder().contact("sharib").timeStamp(new Date().getTime() - 1000).build();
+        Interaction jafariInteraction = Interaction.builder().contact("jafari").timeStamp(new Date().getTime()).build();
 
-        Mockito.when(interactionRepository.findAll()).thenReturn(List.of(sharibInteraction, jafariInteraction, sharibInteraction));
+        Mockito.when(interactionRepository.findAll()).thenReturn(List.of(sharibInteraction, sharibInteraction, jafariInteraction));
         // when
         List<Interaction> allInteractions = service.getAll();
 
         // then
         assertEquals(2, allInteractions.size());
-        assertTrue(allInteractions.containsAll(List.of(sharibInteraction, jafariInteraction)));
+        assertEquals(jafariInteraction, allInteractions.get(0));
+        assertEquals(sharibInteraction, allInteractions.get(1));
     }
 
     @Test
@@ -188,18 +189,19 @@ class InteractionDomainServiceTest {
 
 
     @Test
-    void whenContactExists_thenReturnAllInteractionsOnGetByContact() throws IOException {
+    void whenContactExists_thenReturnAllInteractionsOnGetByContactSortedByTimeStamp() throws IOException {
         // given
-        Interaction interaction1 = Interaction.builder().contact("sharib").build();
-        Interaction interaction2 = Interaction.builder().contact("sharib").build();
+        Interaction sharibInteraction = Interaction.builder().contact("sharib").timeStamp(new Date().getTime() - 1000).build();
+        Interaction jafariInteraction = Interaction.builder().contact("jafari").timeStamp(new Date().getTime()).build();
 
         Mockito.when(contactRepository.find("sharib")).thenReturn(Optional.ofNullable(Contact.builder().nickName("sharib").build()));
-        Mockito.when(interactionRepository.findAll("sharib")).thenReturn(List.of(interaction1, interaction2));
+        Mockito.when(interactionRepository.findAll("sharib")).thenReturn(List.of(sharibInteraction, jafariInteraction, jafariInteraction));
         // when
         List<Interaction> interactions = service.getAll("sharib");
         // then
         assertEquals(2, interactions.size());
-        assertTrue(interactions.containsAll(List.of(interaction1, interaction2)));
+        assertEquals(jafariInteraction, interactions.get(0));
+        assertEquals(sharibInteraction, interactions.get(1));
     }
 
     @Test

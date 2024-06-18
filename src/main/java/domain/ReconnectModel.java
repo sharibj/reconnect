@@ -6,15 +6,14 @@ import java.util.Date;
 import lombok.Getter;
 
 @Getter
-//TODO Come up with a better name
-public class ContactInteraction {
+public class ReconnectModel {
     private final String contact;
     private final String group;
     private final Integer frequencyInDays;
     private final Long lastContactedTimestamp;
     private final Long nextContactTimestamp;
 
-    public ContactInteraction(final String contact, final String group, final Integer frequencyInDays, final Long lastContactedTimestamp) {
+    public ReconnectModel(final String contact, final String group, final Integer frequencyInDays, final Long lastContactedTimestamp) {
         this.contact = contact;
         this.group = group;
         this.frequencyInDays = frequencyInDays;
@@ -35,10 +34,6 @@ public class ContactInteraction {
     public boolean isOutOfTouch() {
         long currentTimeStamp = Calendar.getInstance().getTime().getTime();
         return currentTimeStamp >= nextContactTimestamp;
-    }
-
-    public boolean notYetContacted() {
-        return lastContactedTimestamp == 0;
     }
 
     public String toHumanReadableString() {

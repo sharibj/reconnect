@@ -22,15 +22,15 @@ public class ReconnectDomainService {
         this.groupDomainService = groupDomainService;
     }
 
-    public List<ContactInteraction> getOutOfTouchContactList() {
-        return contactDomainService.getAll().stream().map(this::getContactInteraction).filter(ContactInteraction::isOutOfTouch).sorted(Comparator.comparing(ContactInteraction::getNextContactTimestamp)).toList();
+    public List<ReconnectModel> getOutOfTouchContactList() {
+        return contactDomainService.getAll().stream().map(this::getContactInteraction).filter(ReconnectModel::isOutOfTouch).sorted(Comparator.comparing(ReconnectModel::getNextContactTimestamp)).toList();
     }
 
     @SneakyThrows
-    private ContactInteraction getContactInteraction(Contact contact) {
+    private ReconnectModel getContactInteraction(Contact contact) {
         Group group = groupDomainService.get(contact.getGroup());
         List<Interaction> allInteractions = interactionDomainService.getAll(contact.getNickName());
         Long lastInteractionTimeStamp = allInteractions.isEmpty() ? 0 : allInteractions.getFirst().getTimeStamp();
-        return new ContactInteraction(contact.getNickName(), group.getName(), group.getFrequencyInDays(), lastInteractionTimeStamp);
+        return new ReconnectModel(contact.getNickName(), group.getName(), group.getFrequencyInDays(), lastInteractionTimeStamp);
     }
 }

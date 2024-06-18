@@ -106,7 +106,7 @@ class ContactDomainServiceTest {
     }
 
     @Test
-    void whenCalledWithNameOfANonExistingContact_thenThrowException() throws IOException {
+    void whenCalledWithNameOfANonExistingContact_thenThrowException() {
         // given
         String nickName = "sharib";
 
@@ -191,24 +191,29 @@ class ContactDomainServiceTest {
     }
 
     @Test
-    void whenContactWithNameExists_thenReturnContactOnGet() throws IOException {
+    void whenGetAllByGroup_thenReturnAllContactsForGroup() {
+        // given
+        Contact familyContact = Contact.builder().nickName("sharib").group("family").build();
+        Contact friendsContact = Contact.builder().nickName("jafari").group("friends").build();
+
+        Mockito.when(repository.findAll()).thenReturn(List.of(familyContact, friendsContact, familyContact));
+        // when
+        Set<Contact> allContacts = service.getAll("family");
+
+        // then
+        assertEquals(1, allContacts.size());
+        assertTrue(allContacts.contains(familyContact));
+    }
+
+    @Test
+    void whenContactWithNameExists_thenReturnContactOnGet() {
         // given
         Contact contact = Contact.builder().nickName("family").build();
         Mockito.when(repository.find(contact.getNickName())).thenReturn(Optional.of(contact));
         // when
-        Contact returnedContact = service.get(contact.getNickName());
+        Contact returnedContact = service.get(contact.getNickName()).get();
         // then
         assertEquals(returnedContact, contact);
-    }
-
-    @Test
-    void whenContactWithNameDoesNotExist_thenThrowExceptionOnGet() {
-        // given
-        String nickName = "nonExistingName";
-        // when
-        Mockito.when(repository.find(nickName)).thenReturn(Optional.empty());
-        // then
-        assertThrows(IOException.class, () -> service.get(nickName));
     }
     //endregion
 

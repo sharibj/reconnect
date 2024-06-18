@@ -28,7 +28,7 @@ in the future.
 ```
 mvn package
 
-java -cp \"/Users/sharib.jafari/.m2/repository/info/picocli/picocli/4.7.6/picocli-4.7.6.jar:/Users/sharib.jafari/Documents/reconnect/reconnect/target/reconnect-1.0-SNAPSHOT.jar\" application.ShellApplication
+java -cp \"/Users/sharib.jafari/.m2/repository/info/picocli/picocli/4.7.6/picocli-4.7.6.jar:/Users/sharib.jafari/Documents/reconnect/target/reconnect-1.0-SNAPSHOT.jar\" application.ShellApplication
 ```
 
 ### Commands to assemble and install application

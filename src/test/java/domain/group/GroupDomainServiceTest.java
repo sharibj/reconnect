@@ -104,7 +104,7 @@ class GroupDomainServiceTest {
     }
 
     @Test
-    void whenCalledWithNameOfANonExistingGroup_thenThrowException() throws IOException {
+    void whenCalledWithNameOfANonExistingGroup_thenThrowException() {
         // given
         String name = "family";
 

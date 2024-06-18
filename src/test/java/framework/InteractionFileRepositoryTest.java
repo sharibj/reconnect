@@ -1,6 +1,7 @@
 package framework;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,7 +13,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import domain.contact.Contact;
 import domain.interaction.Interaction;
 
 class InteractionFileRepositoryTest {
@@ -53,6 +53,7 @@ class InteractionFileRepositoryTest {
         // then
         assertEquals(2, allInteractions.size());
     }
+
     @Test
     void whenFindAllByContact_thenReturnAllInteractionsForContact() {
         // when

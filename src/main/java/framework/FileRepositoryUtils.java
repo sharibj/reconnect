@@ -21,19 +21,12 @@ class FileRepositoryUtils {
         Files.createDirectories(Paths.get(filePath));
         File file = new File(filePath, fileName);
 
-        //TODO: Test file creation
         if (!file.isFile() && !file.createNewFile()) {
             throw new IOException("Error creating new file: " + file.getAbsolutePath());
         }
-        List<String> lines = List.of();
-
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        try {
-            lines = reader.lines().toList();
-        } finally {
-            reader.close();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            return reader.lines().toList();
         }
-        return lines;
     }
 
     public static List<String> readTokens(final String line, final String delimiter) {
@@ -52,20 +45,10 @@ class FileRepositoryUtils {
             throw new IOException("Error creating new file: " + file.getAbsolutePath());
         }
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-        writer.write("");
-        try {
+        try (writer) {
             for (String line : lines) {
-                writer.append(line + "\n");
+                writer.append(line).append("\n");
             }
-        } finally {
-            writer.close();
-        }
-    }
-
-    public static void dropFile(String filePath, String fileName) {
-        File file = new File(filePath, fileName);
-        if (file.isFile()) {
-            file.delete();
         }
     }
 }

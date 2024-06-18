@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import domain.contact.Contact;
 import domain.contact.ContactRepository;
+import lombok.SneakyThrows;
 
 public class ContactFileRepository implements ContactRepository {
     private static final String DELIMITER = ",";
@@ -21,19 +22,17 @@ public class ContactFileRepository implements ContactRepository {
         loadContacts(filePath, fileName);
     }
 
+    @SneakyThrows
     private void loadContacts(String filePath, String fileName) {
-        List<String> lines = new ArrayList<>();
-        try {
-            lines = FileRepositoryUtils.readLines(filePath, fileName);
-        } catch (IOException exception) {
-            // Ignore Exceptions
-        }
-        lines.stream().map(this::lineToContact).filter(Objects::nonNull).forEach(contacts::add);
+        FileRepositoryUtils.readLines(filePath, fileName).stream()
+                .map(this::lineToContact)
+                .filter(Objects::nonNull)
+                .forEach(contacts::add);
     }
 
     private Contact lineToContact(String line) {
         List<String> tokens = FileRepositoryUtils.readTokens(line, DELIMITER);
-        if (tokens.size() < 1) {
+        if (tokens.isEmpty()) {
             // ignore faulty lines
             return null;
         }

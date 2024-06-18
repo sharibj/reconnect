@@ -3,7 +3,7 @@ package application;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import domain.ContactInteraction;
+import domain.ReconnectModel;
 import domain.ReconnectDomainService;
 import framework.ContactFileRepository;
 import framework.ContactFileService;
@@ -15,11 +15,12 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "reconnect", subcommands = { GroupCommand.class, ContactCommand.class, InteractionCommand.class }, mixinStandardHelpOptions = true, version = "checksum 4.0",
-        description = "Coming Soon")
+@Command(name = "reconnect",
+        subcommands = { GroupCommand.class, ContactCommand.class, InteractionCommand.class }, mixinStandardHelpOptions = true, version = "checksum 4.0",
+        description = "Stay connected by never loosing touch with your contacts.")
 public class ShellApplication implements Callable<Integer> {
 
-    @Parameters(defaultValue = "./")
+    @Parameters(defaultValue = "./", hidden = true)
     static String filePath = "";
     public static final String GROUPS_FILE = "groups.csv";
     public static final String CONTACTS_FILE = "contacts.csv";
@@ -50,9 +51,9 @@ public class ShellApplication implements Callable<Integer> {
     }
 
     private Integer listOutOfTouch(final ReconnectDomainService reconnectDomainService) {
-        List<ContactInteraction> outOfTouchList = reconnectDomainService.getOutOfTouchContactList();
+        List<ReconnectModel> outOfTouchList = reconnectDomainService.getOutOfTouchContactList();
         println("Out of touch contacts (" + outOfTouchList.size() + ")\n");
-        outOfTouchList.stream().map(ContactInteraction::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
+        outOfTouchList.stream().map(ReconnectModel::toHumanReadableString).forEach(contact -> ShellApplication.println(contact + "\n"));
         return 0;
     }
 }
