@@ -36,7 +36,7 @@ java -cp \"/Users/sharib.jafari/.m2/repository/info/picocli/picocli/4.7.6/picocl
 ```
 mvn package appassembler:assemble &&
 cd target &&
-sh installReconnect.sh ~/Document/reconnect_files &&
+sh installReconnect.sh ~/Documents/reconnect_files &&
 source ~/.bashrc &&
 cd ..
 ```
