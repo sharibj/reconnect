@@ -89,7 +89,8 @@ public class DomainMapper {
                 domain.getContact(),
                 String.valueOf(domain.getTimeStamp()),
                 domain.getNotes(),
-                toDTO(domain.getInteractionDetails())
+                toDTO(domain.getInteractionDetails()),
+                domain.toHumanReadableString()
         );
     }
 
