@@ -1,6 +1,7 @@
 package spring.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/reconnect")
+@RequestMapping(value = "/api/reconnect", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Reconnect API", description = "API for managing contacts, interactions, and groups")
 public class ReconnectController {
 
@@ -110,7 +111,7 @@ public class ReconnectController {
         @ApiResponse(responseCode = "404", description = "Contact not found"),
         @ApiResponse(responseCode = "409", description = "Interaction already exists")
     })
-    @PostMapping("/interactions")
+    @PostMapping(value = "/interactions", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addInteraction(@RequestBody CreateInteractionDTO createInteractionDTO) {
         interactionService.addInteraction(createInteractionDTO);
         return ResponseEntity.ok().build();
@@ -122,7 +123,7 @@ public class ReconnectController {
         @ApiResponse(responseCode = "400", description = "Invalid interaction data"),
         @ApiResponse(responseCode = "404", description = "Interaction not found")
     })
-    @PutMapping("/interactions/{id}")
+    @PutMapping(value = "/interactions/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateInteraction(
             @Schema(description = "ID of the interaction to update", required = true)
             @PathVariable(name = "id") String id,

@@ -40,8 +40,8 @@ public class FrameworkConfig {
     }
 
     @Bean
-    public GroupDomainService groupDomainService(GroupFileRepository groupRepository) {
-        return new GroupFileService(groupRepository);
+    public GroupDomainService groupDomainService(GroupFileRepository groupRepository, ContactFileRepository contactRepository) {
+        return new GroupFileService(groupRepository, contactRepository);
     }
 
     @Bean

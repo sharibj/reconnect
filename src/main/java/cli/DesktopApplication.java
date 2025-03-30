@@ -29,7 +29,7 @@ public class DesktopApplication extends Application {
         ContactFileRepository contactRepository = new ContactFileRepository(FILE_PATH, CONTACTS_FILE);
         InteractionFileRepository interactionRepository = new InteractionFileRepository(FILE_PATH, INTERACTIONS_FILE);
 
-        GroupFileService groupService = new GroupFileService(groupRepository);
+        GroupFileService groupService = new GroupFileService(groupRepository, contactRepository);
         ContactFileService contactService = new ContactFileService(contactRepository, groupRepository);
         InteractionFileService interactionService = new InteractionFileService(interactionRepository, contactRepository);
 

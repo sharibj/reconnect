@@ -10,13 +10,15 @@ import java.util.concurrent.Callable;
 import domain.group.Group;
 import framework.GroupFileRepository;
 import framework.GroupFileService;
+import framework.ContactFileRepository;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "group")
 public class GroupCommand implements Callable<Integer> {
     GroupFileRepository groupRepository = new GroupFileRepository(filePath, "groups.csv");
-    GroupFileService groupService = new GroupFileService(groupRepository);
+    ContactFileRepository contactRepository = new ContactFileRepository(filePath, "contacts.csv");
+    GroupFileService groupService = new GroupFileService(groupRepository, contactRepository);
 
     @Override
     public Integer call() {

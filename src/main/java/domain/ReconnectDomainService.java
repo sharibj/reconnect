@@ -30,7 +30,7 @@ public class ReconnectDomainService {
     private ReconnectModel getContactInteraction(Contact contact) {
         Group group = groupDomainService.get(contact.getGroup());
         List<Interaction> allInteractions = interactionDomainService.getAll(contact.getNickName());
-        Long lastInteractionTimeStamp = allInteractions.isEmpty() ? 0 : allInteractions.getFirst().getTimeStamp();
+        Long lastInteractionTimeStamp = allInteractions.isEmpty() ? 0L : allInteractions.get(0).getTimeStamp();
         return new ReconnectModel(contact.getNickName(), group.getName(), group.getFrequencyInDays(), lastInteractionTimeStamp);
     }
 }

@@ -32,7 +32,7 @@ public class ShellApplication implements Callable<Integer> {
         ContactFileRepository contactRepository = new ContactFileRepository(filePath, CONTACTS_FILE);
         InteractionFileRepository interactionRepository = new InteractionFileRepository(filePath, INTERACTIONS_FILE);
 
-        GroupFileService groupService = new GroupFileService(groupRepository);
+        GroupFileService groupService = new GroupFileService(groupRepository, contactRepository);
         //TODO Consider using group service instead of repository
         ContactFileService contactService = new ContactFileService(contactRepository, groupRepository);
         InteractionFileService interactionService = new InteractionFileService(interactionRepository, contactRepository);
