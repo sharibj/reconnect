@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import domain.contact.ContactRepository;
+
 @ExtendWith(MockitoExtension.class)
 class GroupDomainServiceTest {
 
@@ -26,6 +28,10 @@ class GroupDomainServiceTest {
 
     @Mock
     GroupRepository repository;
+    
+    @Mock
+    ContactRepository contactRepository;
+    
     @Captor
     ArgumentCaptor<Group> groupCaptor;
 

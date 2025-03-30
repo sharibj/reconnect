@@ -51,9 +51,12 @@ public class GroupDomainService {
     }
 
     public void update(Group group) throws IOException {
-        if (repository.find(group.getName()).isEmpty()) {
-            throw new IOException("Group with name = " + group.getName() + " does not exist.");
+        Group existingGroup = repository.find(group.getName())
+                .orElseThrow(() -> new IOException("Group with name = " + group.getName() + " does not exist."));
+        
+        // Only save if the group has actually changed
+        if (!existingGroup.equals(group)) {
+            repository.save(group);
         }
-        repository.save(group);
     }
 }
