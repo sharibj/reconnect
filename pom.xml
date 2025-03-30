@@ -12,9 +12,22 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.module.path>${project.basedir}/lib/javafx-sdk-17.0.2/lib</javafx.module.path>
     </properties>
 
     <dependencies>
+        <!-- Spring Boot Starter Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <!-- SpringDoc OpenAPI (Swagger) -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.3.0</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -48,6 +61,21 @@
             <artifactId>picocli</artifactId>
             <version>4.7.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>17.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>17.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>17.0.2</version>
+        </dependency>
     </dependencies>
     <build>
         <!-- To define the plugin version in your parent POM -->
@@ -55,12 +83,26 @@
             <plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <mainClass>spring.ReconnectSpringApplication</mainClass>
+                        <arguments>
+                            <argument>--module-path</argument>
+                            <argument>${javafx.module.path}</argument>
+                            <argument>--add-modules</argument>
+                            <argument>javafx.controls,javafx.graphics,javafx.base</argument>
+                        </arguments>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>appassembler-maven-plugin</artifactId>
                     <version>1.10</version>
                     <configuration>
                         <programs>
                             <program>
-                                <mainClass>application.ShellApplication</mainClass>
+                                <mainClass>cli.ShellApplication</mainClass>
                                 <id>reconnect</id>
                             </program>
                         </programs>
@@ -77,4 +119,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
