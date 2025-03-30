@@ -1,11 +1,11 @@
 package config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import domain.contact.ContactDomainService;
-import domain.contact.ContactRepository;
 import domain.group.GroupDomainService;
-import domain.group.GroupRepository;
 import domain.interaction.InteractionDomainService;
-import domain.interaction.InteractionRepository;
 import filedb.ContactFileRepository;
 import filedb.ContactFileService;
 import filedb.GroupFileRepository;
@@ -13,11 +13,8 @@ import filedb.GroupFileService;
 import filedb.InteractionFileRepository;
 import filedb.InteractionFileService;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 @Configuration
-public class FrameworkConfig {
+public class FiledbConfig {
     private static final String DATA_DIR = "data";
 
     @Bean
@@ -36,17 +33,20 @@ public class FrameworkConfig {
     }
 
     @Bean
-    public ContactDomainService contactDomainService(ContactFileRepository contactRepository, GroupFileRepository groupRepository) {
+    public ContactDomainService contactDomainService(ContactFileRepository contactRepository,
+            GroupFileRepository groupRepository) {
         return new ContactFileService(contactRepository, groupRepository);
     }
 
     @Bean
-    public GroupDomainService groupDomainService(GroupFileRepository groupRepository, ContactFileRepository contactRepository) {
+    public GroupDomainService groupDomainService(GroupFileRepository groupRepository,
+            ContactFileRepository contactRepository) {
         return new GroupFileService(groupRepository, contactRepository);
     }
 
     @Bean
-    public InteractionDomainService interactionDomainService(InteractionFileRepository interactionRepository, ContactFileRepository contactRepository) {
+    public InteractionDomainService interactionDomainService(InteractionFileRepository interactionRepository,
+            ContactFileRepository contactRepository) {
         return new InteractionFileService(interactionRepository, contactRepository);
     }
-} 
+}
