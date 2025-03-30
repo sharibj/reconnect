@@ -41,8 +41,13 @@ public class ReconnectController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved contacts")
     })
     @GetMapping("/contacts")
-    public ResponseEntity<List<ContactDTO>> listContacts() {
-        return ResponseEntity.ok(contactService.getAllContacts());
+    public ResponseEntity<List<ContactDTO>> listContacts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<ContactDTO> allContacts = contactService.getAllContacts();
+        int start = page * size;
+        int end = Math.min(start + size, allContacts.size());
+        return ResponseEntity.ok(allContacts.subList(start, end));
     }
 
     @Operation(summary = "Add a new contact")
@@ -100,8 +105,13 @@ public class ReconnectController {
     @GetMapping("/contacts/{nickName}/interactions")
     public ResponseEntity<List<InteractionDTO>> listInteractions(
             @Schema(description = "Nickname of the contact to get interactions for", required = true)
-            @PathVariable(name = "nickName") String nickName) {
-        return ResponseEntity.ok(interactionService.getAllInteractions(nickName));
+            @PathVariable(name = "nickName") String nickName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<InteractionDTO> allInteractions = interactionService.getAllInteractions(nickName);
+        int start = page * size;
+        int end = Math.min(start + size, allInteractions.size());
+        return ResponseEntity.ok(allInteractions.subList(start, end));
     }
 
     @Operation(summary = "Add a new interaction")
@@ -158,8 +168,14 @@ public class ReconnectController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved groups")
     })
     @GetMapping("/groups")
-    public ResponseEntity<Set<GroupDTO>> listGroups() {
-        return ResponseEntity.ok(groupService.getAllGroups());
+    public ResponseEntity<List<GroupDTO>> listGroups(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Set<GroupDTO> allGroups = groupService.getAllGroups();
+        List<GroupDTO> groupsList = allGroups.stream().toList();
+        int start = page * size;
+        int end = Math.min(start + size, groupsList.size());
+        return ResponseEntity.ok(groupsList.subList(start, end));
     }
 
     @Operation(summary = "Add a new group")
@@ -207,7 +223,12 @@ public class ReconnectController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved out of touch contacts")
     })
     @GetMapping("/out-of-touch")
-    public ResponseEntity<List<ReconnectModelDTO>> getOutOfTouchContacts() {
-        return ResponseEntity.ok(reconnectService.getOutOfTouchContacts());
+    public ResponseEntity<List<ReconnectModelDTO>> getOutOfTouchContacts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<ReconnectModelDTO> allContacts = reconnectService.getOutOfTouchContacts();
+        int start = page * size;
+        int end = Math.min(start + size, allContacts.size());
+        return ResponseEntity.ok(allContacts.subList(start, end));
     }
 }
