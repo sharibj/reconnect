@@ -4,13 +4,15 @@ import java.io.IOException;
 
 import domain.contact.Contact;
 import domain.contact.ContactDomainService;
+import domain.contact.ContactRepository;
+import domain.group.GroupRepository;
 
 public class ContactFileService extends ContactDomainService {
     private final ContactFileRepository contactFileRepository;
 
-    public ContactFileService(final ContactFileRepository contactFileRepository, final GroupFileRepository groupFileRepository) {
-        super(contactFileRepository, groupFileRepository);
-        this.contactFileRepository = contactFileRepository;
+    public ContactFileService(final ContactRepository contactRepository, final GroupRepository groupRepository) {
+        super(contactRepository, groupRepository);
+        this.contactFileRepository = (ContactFileRepository) contactRepository;
     }
 
     @Override

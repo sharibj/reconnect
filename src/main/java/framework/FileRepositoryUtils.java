@@ -51,4 +51,18 @@ class FileRepositoryUtils {
             }
         }
     }
+
+    public static void writeLines(List<String> lines, String filePath, String fileName) throws IOException {
+        Files.createDirectories(Paths.get(filePath));
+        File file = new File(filePath, fileName);
+        if (!file.isFile() && !file.createNewFile()) {
+            throw new IOException("Error creating new file: " + file.getAbsolutePath());
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
 }

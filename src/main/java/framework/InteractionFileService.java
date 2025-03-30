@@ -4,13 +4,15 @@ import java.io.IOException;
 
 import domain.interaction.Interaction;
 import domain.interaction.InteractionDomainService;
+import domain.interaction.InteractionRepository;
+import domain.contact.ContactRepository;
 
 public class InteractionFileService extends InteractionDomainService {
     private final InteractionFileRepository interactionFileRepository;
 
-    public InteractionFileService(final InteractionFileRepository interactionFileRepository, final ContactFileRepository contactRepository) {
-        super(interactionFileRepository, contactRepository);
-        this.interactionFileRepository = interactionFileRepository;
+    public InteractionFileService(final InteractionRepository interactionRepository, final ContactRepository contactRepository) {
+        super(interactionRepository, contactRepository);
+        this.interactionFileRepository = (InteractionFileRepository) interactionRepository;
     }
 
     @Override

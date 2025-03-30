@@ -50,7 +50,7 @@ public class InteractionFileRepository implements InteractionRepository {
         return switch (tokenNumber) {
             case 0 -> builder.id(token);
             case 1 -> builder.contact(token);
-            case 2 -> builder.timeStamp(Long.parseLong(token));
+            case 2 -> builder.timeStamp("null".equals(token) ? new java.util.Date().getTime() : Long.parseLong(token));
             case 3 -> builder.notes(token);
             default -> builder;
         };

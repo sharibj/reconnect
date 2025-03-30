@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import domain.contact.Contact;
 import domain.contact.ContactRepository;
+import domain.contact.ContactDetails;
 import lombok.SneakyThrows;
 
 public class ContactFileRepository implements ContactRepository {
@@ -33,18 +34,37 @@ public class ContactFileRepository implements ContactRepository {
     private Contact lineToContact(String line) {
         List<String> tokens = FileRepositoryUtils.readTokens(line, DELIMITER);
         if (tokens.isEmpty()) {
-            // ignore faulty lines
             return null;
         }
         Contact.ContactBuilder contactBuilder = Contact.builder()
                 .nickName(tokens.get(0));
-        return tokens.size() == 2 ? contactBuilder.group(tokens.get(1)).build() : contactBuilder.build();
+
+        if (tokens.size() > 1) {
+            contactBuilder.group(tokens.get(1));
+        }
+
+        if (tokens.size() > 3) {
+            ContactDetails details = new ContactDetails();
+            details.setFirstName(tokens.get(2));
+            details.setLastName(tokens.get(3));
+            contactBuilder.details(details);
+        }
+
+        return contactBuilder.build();
     }
 
     private String contactToLine(Contact contact) {
-        return contact.getNickName() + DELIMITER + contact.getGroup();
+        StringBuilder line = new StringBuilder(contact.getNickName() + DELIMITER + contact.getGroup());
+        
+        if (contact.getDetails() != null) {
+            line.append(DELIMITER)
+                .append(contact.getDetails().getFirstName())
+                .append(DELIMITER)
+                .append(contact.getDetails().getLastName());
+        }
+        
+        return line.toString();
     }
-
 
     @Override
     public Optional<Contact> find(final String nickName) {
@@ -57,17 +77,19 @@ public class ContactFileRepository implements ContactRepository {
     }
 
     @Override
-    public Contact save(final Contact contact) {
-        delete(contact.getNickName());
+    public Contact save(Contact contact) {
+        contacts.removeIf(c -> c.getNickName().equals(contact.getNickName()));
         contacts.add(contact);
         return contact;
     }
 
     @Override
-    public Contact delete(final String nickName) {
-        Optional<Contact> matchingContact = contacts.stream().filter(savedContact -> nickName.equals(savedContact.getNickName())).findFirst();
-        matchingContact.ifPresent(contacts::remove);
-        return matchingContact.orElse(null);
+    public Contact delete(String nickName) {
+        Optional<Contact> contact = find(nickName);
+        if (contact.isPresent()) {
+            contacts.remove(contact.get());
+        }
+        return contact.orElse(null);
     }
 
     public void commit() throws IOException {
