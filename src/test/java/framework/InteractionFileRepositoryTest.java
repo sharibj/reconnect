@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.interaction.Interaction;
+import filedb.FileRepositoryUtils;
+import filedb.InteractionFileRepository;
 
 class InteractionFileRepositoryTest {
     public static final String FILE_PATH = "src/test/resources/";

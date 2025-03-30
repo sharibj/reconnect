@@ -6,13 +6,14 @@ import domain.group.GroupDomainService;
 import domain.group.GroupRepository;
 import domain.interaction.InteractionDomainService;
 import domain.interaction.InteractionRepository;
+import filedb.ContactFileRepository;
+import filedb.ContactFileService;
+import filedb.GroupFileRepository;
+import filedb.GroupFileService;
+import filedb.InteractionFileRepository;
+import filedb.InteractionFileService;
 import domain.ReconnectDomainService;
-import framework.ContactFileRepository;
-import framework.GroupFileRepository;
-import framework.InteractionFileRepository;
-import framework.ContactFileService;
-import framework.GroupFileService;
-import framework.InteractionFileService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
