@@ -40,3 +40,4 @@ build/
 src/main/resources/groups.csv
 data/
 test-data/
+/data
