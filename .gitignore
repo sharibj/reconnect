@@ -42,3 +42,7 @@ data/**
 test-data/
 /data
 /data/**
+output.log
+data/contacts.txt
+data/groups.txt
+data/interactions.txt
