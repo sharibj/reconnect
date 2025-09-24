@@ -46,3 +46,5 @@ output.log
 data/contacts.txt
 data/groups.txt
 data/interactions.txt
+
+src/test/resources

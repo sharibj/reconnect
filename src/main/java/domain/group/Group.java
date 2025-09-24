@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @EqualsAndHashCode
 public class Group {

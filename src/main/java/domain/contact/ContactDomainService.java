@@ -26,17 +26,19 @@ public class ContactDomainService {
     }
 
     public void remove(final String nickName) throws IOException {
-        validateContactExists(nickName);
-        repository.delete(nickName);
+		String lowerNickName = nickName.toLowerCase();
+        validateContactExists(lowerNickName);
+        repository.delete(lowerNickName);
     }
 
     public void update(final Contact contact) throws IOException {
-        validateGroupExists(contact.getGroup());
-        Contact existingContact = get(contact
+		Contact updatedContact = contact.toBuilder().nickName(contact.getNickName().toLowerCase()).build();
+        validateGroupExists(updatedContact.getGroup());
+        Contact existingContact = get(updatedContact
                 .getNickName())
-                .orElseThrow(() -> new IOException("Contact not found: " + contact.getNickName()));
-        if (!existingContact.equals(contact)) {
-            repository.save(contact);
+                .orElseThrow(() -> new IOException("Contact not found: " + updatedContact.getNickName()));
+        if (!existingContact.equals(updatedContact)) {
+            repository.save(updatedContact);
         }
     }
 
@@ -46,7 +48,7 @@ public class ContactDomainService {
 
     public Set<Contact> getAll(final String groupName) {
         return repository.findAll().stream()
-                .filter(contact -> contact.getGroup().equals(groupName))
+                .filter(contact -> contact.getGroup().equals(groupName.toLowerCase()))
                 .collect(Collectors.toSet());
     }
 

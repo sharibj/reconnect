@@ -217,6 +217,7 @@ class ContactDomainServiceTest {
     }
     //endregion
 
+	//region case-insensitive tests
 	@Test
 	void whenContactNicknameIsInUppercase_thenStoreAsLowercase() throws IOException {
 		// given
@@ -244,4 +245,51 @@ class ContactDomainServiceTest {
 		// then
 		assertEquals("sharib", returnedContact.getNickName());
 	}
+	
+	@Test
+	void whenContactNicknameIsInUppercase_thenUpdateAsLowercase() throws IOException {
+		// given
+		Contact existingContact = Contact.builder().nickName("sharib").group("family").build();
+		Contact updatedContact = Contact.builder().nickName("SHARIB").group("friends").build();
+		Mockito.when(repository.find("sharib")).thenReturn(Optional.of(existingContact));
+		Mockito.when(groupRepository.find("friends")).thenReturn(Optional.ofNullable(Group.builder().name("friends").frequencyInDays(7).build()));
+		
+		// when
+		service.update(updatedContact);
+		
+		// then
+		Mockito.verify(repository).save(contactCaptor.capture());
+		Contact savedContact = contactCaptor.getValue();
+		assertEquals("sharib", savedContact.getNickName());
+		assertEquals("friends", savedContact.getGroup());
+	}
+	
+	@Test
+	void whenContactNicknameIsInUppercase_thenDeleteAsLowercase() throws IOException {
+		// given
+		Contact existingContact = Contact.builder().nickName("sharib").group("family").build();
+		Mockito.when(repository.find("sharib")).thenReturn(Optional.of(existingContact));
+		
+		// when
+		service.remove("SHARIB");
+		
+		// then
+		Mockito.verify(repository).delete("sharib");
+	}
+	
+	@Test
+	void whenGetAllContactsWithUppercaseGroupName_thenReturnAllContactsForGroup() {
+		// given
+		Contact familyContact = Contact.builder().nickName("sharib").group("family").build();
+		Contact friendsContact = Contact.builder().nickName("jafari").group("friends").build();
+
+		Mockito.when(repository.findAll()).thenReturn(List.of(familyContact, friendsContact, familyContact));
+		// when
+		Set<Contact> allContacts = service.getAll("FAMILY");
+
+		// then
+		assertEquals(1, allContacts.size());
+		assertTrue(allContacts.contains(familyContact));
+	}
+	//endregion
 }

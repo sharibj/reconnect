@@ -197,7 +197,7 @@ class GroupDomainServiceTest {
     @Test
     void whenGroupWithNameDoesNotExist_thenThrowExceptionOnGet() {
         // given
-        String name = "nonExistingName";
+        String name = "non-existing-name";
         // when
         Mockito.when(repository.find(name)).thenReturn(Optional.empty());
         // then
@@ -205,4 +205,61 @@ class GroupDomainServiceTest {
     }
     //endregion
 
+	//region case-insensitivity
+	@Test
+	void whenGroupNameIsInUpperCase_thenStoreInLowerCase() throws IOException {
+		// given
+		String groupName = "Family";
+		service.add(Group.builder().name(groupName).build());
+
+		// when
+		Mockito.verify(repository).save(groupCaptor.capture());
+
+		// then
+		Group group = groupCaptor.getValue();
+		assertEquals("family", group.getName());
+		assertEquals(DEFAULT_FREQUENCY, group.getFrequencyInDays());
+	}
+	
+	@Test
+	void whenGroupNameIsQueriedInUpperCase_thenReturnInLowerCase() throws IOException {
+		// given
+		String groupName = "Family";
+		Group group = Group.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
+		Mockito.when(repository.find("family")).thenReturn(Optional.of(group));
+		
+		// when
+		Group returnedGroup = service.get(groupName);
+		
+		// then
+		assertEquals(returnedGroup, group);
+	}
+	
+	@Test
+	void whenGroupNameIsInUpperCase_thenUpdateInLowerCase() throws IOException {
+		// given
+		Group group = Group.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
+		Mockito.when(repository.find(group.getName())).thenReturn(Optional.of(group));
+		// when
+		service.update(Group.builder().name("Family").frequencyInDays(20).build());
+		// then
+		Mockito.verify(repository, Mockito.times(1)).save(groupCaptor.capture());
+		Group capturedGroup = groupCaptor.getValue();
+		assertEquals("family", capturedGroup.getName());
+		assertEquals(20, capturedGroup.getFrequencyInDays().intValue());
+	}
+	
+	@Test
+	void whenGroupNameIsInUpperCase_thenDeleteInLowerCase() throws IOException {
+		// given
+		Group group = Group.builder().name("family").frequencyInDays(DEFAULT_FREQUENCY).build();
+		Mockito.when(repository.find(group.getName())).thenReturn(Optional.of(group));
+
+		// when
+		service.remove("Family");
+
+		// then
+		Mockito.verify(repository, Mockito.times(1)).delete("family");
+	}
+	//endregion
 }

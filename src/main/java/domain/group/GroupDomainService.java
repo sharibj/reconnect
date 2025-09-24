@@ -18,26 +18,27 @@ public class GroupDomainService {
     }
 
     public void add(Group group) throws IOException {
-        if (repository.find(group.getName()).isPresent()) {
-            throw new IOException("Group with name " + group.getName() + " already exists");
+		Group updatedGroup = group.toBuilder().name(group.getName().toLowerCase()).build();
+        if (repository.find(updatedGroup.getName()).isPresent()) {
+            throw new IOException("Group with name " + updatedGroup.getName() + " already exists");
         }
-        repository.save(Group.builder().name(group.getName()).frequencyInDays(group.getFrequencyInDays()).build());
+        repository.save(updatedGroup);
     }
 
     public void remove(String name) throws IOException {
-        if (repository.find(name).isEmpty()) {
+        if (repository.find(name.toLowerCase()).isEmpty()) {
             throw new IOException("Group with name = " + name + " doesn't exist");
         }
         
         // Check if any contacts are using this group
         boolean hasContacts = contactRepository.findAll().stream()
-                .anyMatch(contact -> name.equals(contact.getGroup()));
+                .anyMatch(contact -> name.equalsIgnoreCase(contact.getGroup()));
         
         if (hasContacts) {
             throw new IOException("Cannot delete group '" + name + "' as it has contacts associated with it");
         }
         
-        repository.delete(name);
+        repository.delete(name.toLowerCase());
     }
 
     public Set<Group> getAll() {
@@ -46,17 +47,18 @@ public class GroupDomainService {
 
     public Group get(final String name) throws IOException {
         return repository
-                .find(name)
+                .find(name.toLowerCase())
                 .orElseThrow(() -> new IOException("Group with name = " + name + " does not exist."));
     }
 
     public void update(Group group) throws IOException {
-        Group existingGroup = repository.find(group.getName())
-                .orElseThrow(() -> new IOException("Group with name = " + group.getName() + " does not exist."));
+		Group updatedGroup = group.toBuilder().name(group.getName().toLowerCase()).build();
+        Group existingGroup = repository.find(updatedGroup.getName())
+                .orElseThrow(() -> new IOException("Group with name = " + updatedGroup.getName() + " does not exist."));
         
         // Only save if the group has actually changed
-        if (!existingGroup.equals(group)) {
-            repository.save(group);
+        if (!existingGroup.equals(updatedGroup)) {
+            repository.save(updatedGroup);
         }
     }
 }
