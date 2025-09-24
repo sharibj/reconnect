@@ -26,8 +26,8 @@ class ContactFileRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
-        writer.append("sharib, family\n");
-        writer.append("jafari, friends\n");
+        writer.append("sharib± family\n");
+        writer.append("jafari± friends\n");
         writer.close();
         repository = new ContactFileRepository(FILE_PATH, FILE_NAME);
 
@@ -118,8 +118,8 @@ class ContactFileRepositoryTest {
         // then
         lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-        assertEquals("test1,group1", lines.get(0));
-        assertEquals("test2,group2", lines.get(1));
+        assertEquals("test1±group1", lines.get(0));
+        assertEquals("test2±group2", lines.get(1));
     }
 
 

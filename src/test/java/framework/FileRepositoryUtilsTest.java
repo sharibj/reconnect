@@ -19,7 +19,7 @@ class FileRepositoryUtilsTest {
     void whenFilePathAndNameIsProvided_thenReturnLines() throws IOException {
         // given
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(filePath, fileName)));
-        writer.append("id1, friends, 3\nid2, family, 6");
+        writer.append("id1± friends± 3\nid2± family± 6");
         writer.close();
 
         // when
@@ -27,15 +27,15 @@ class FileRepositoryUtilsTest {
 
         // then
         assertEquals(2, lines.size());
-        assertEquals("id1, friends, 3", lines.get(0));
-        assertEquals("id2, family, 6", lines.get(1));
+        assertEquals("id1± friends± 3", lines.get(0));
+        assertEquals("id2± family± 6", lines.get(1));
     }
 
     @Test
     void whenLineIsProvided_thenReturnTokens() {
         //given
-        String line = " token1 ,  token 2 ,  ,token3,,";
-        String delimiter = ",";
+        String line = " token1 ±  token 2 ±  ±token3±±";
+        String delimiter = "±";
 
         // when
         List<String> tokens = FileRepositoryUtils.readTokens(line, delimiter);

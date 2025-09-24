@@ -11,7 +11,7 @@ import domain.group.GroupRepository;
 
 public class GroupFileRepository implements GroupRepository {
 
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = "±";
     private final List<Group> groups = new ArrayList<>();
     private final String filePath;
     private final String fileName;

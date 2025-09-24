@@ -12,7 +12,7 @@ import domain.contact.ContactDetails;
 import lombok.SneakyThrows;
 
 public class ContactFileRepository implements ContactRepository {
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = "±";
     private final List<Contact> contacts = new ArrayList<>();
     private final String filePath;
     private final String fileName;

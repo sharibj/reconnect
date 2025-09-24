@@ -25,8 +25,8 @@ class InteractionFileRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
-        writer.append("id1, sharib\n");
-        writer.append("id2, jafari\n");
+        writer.append("id1± sharib\n");
+        writer.append("id2± jafari\n");
         writer.close();
         repository = new InteractionFileRepository(FILE_PATH, FILE_NAME);
 
@@ -125,8 +125,8 @@ class InteractionFileRepositoryTest {
         // then
         lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-        assertTrue(lines.get(0).startsWith("test1,contact1,"));
-        assertTrue(lines.get(1).startsWith("test2,contact2,"));
+        assertTrue(lines.get(0).startsWith("test1±contact1±"));
+        assertTrue(lines.get(1).startsWith("test2±contact2±"));
     }
 
 

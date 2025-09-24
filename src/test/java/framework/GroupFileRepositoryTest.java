@@ -26,7 +26,7 @@ class GroupFileRepositoryTest {
     @BeforeEach
     void setUp() throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
-        writer.append("friends, 3\nfamily, 6");
+        writer.append("friends± 3\nfamily± 6");
         writer.close();
         repository = new GroupFileRepository(FILE_PATH, FILE_NAME);
     }
@@ -116,7 +116,7 @@ class GroupFileRepositoryTest {
         // then
         lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
         assertEquals(2, lines.size());
-        assertEquals("test1,1", lines.get(0));
-        assertEquals("test2,2", lines.get(1));
+        assertEquals("test1±1", lines.get(0));
+        assertEquals("test2±2", lines.get(1));
     }
 }
