@@ -10,7 +10,7 @@ import domain.interaction.Interaction;
 import domain.interaction.InteractionRepository;
 
 public class InteractionFileRepository implements InteractionRepository {
-    private static final String DELIMITER = ",";
+    private static final String DELIMITER = "±";
     private final List<Interaction> interactions = new ArrayList<>();
     private final String filePath;
     private final String fileName;
