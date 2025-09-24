@@ -19,9 +19,10 @@ public class ContactDomainService {
     }
 
     public void add(final Contact contact) throws IOException {
-        validateContactDoesNotExist(contact.getNickName());
-        validateGroupExists(contact.getGroup());
-        repository.save(contact);
+        Contact updatedContact = contact.toBuilder().nickName(contact.getNickName().toLowerCase()).build();
+        validateContactDoesNotExist(updatedContact.getNickName());
+        validateGroupExists(updatedContact.getGroup());
+        repository.save(updatedContact);
     }
 
     public void remove(final String nickName) throws IOException {
@@ -40,7 +41,7 @@ public class ContactDomainService {
     }
 
     public Optional<Contact> get(final String nickName) {
-        return repository.find(nickName);
+        return repository.find(nickName.toLowerCase());
     }
 
     public Set<Contact> getAll(final String groupName) {

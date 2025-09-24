@@ -217,4 +217,31 @@ class ContactDomainServiceTest {
     }
     //endregion
 
+	@Test
+	void whenContactNicknameIsInUppercase_thenStoreAsLowercase() throws IOException {
+		// given
+		Contact contact = Contact.builder().nickName("SHARIB").group("family").build();
+		Mockito.when(groupRepository.find("family")).thenReturn(Optional.ofNullable(Group.builder().name("family").frequencyInDays(7).build()));
+		
+		// when
+		service.add(contact);
+		
+		// then
+		Mockito.verify(repository).save(contactCaptor.capture());
+		Contact savedContact = contactCaptor.getValue();
+		assertEquals("sharib", savedContact.getNickName());
+	}
+	
+	@Test
+	void whenRequestedContactNicknameIsInUppercase_thenReturnAsLowercase() {
+		// given
+		Contact contact = Contact.builder().nickName("sharib").build();
+		Mockito.when(repository.find("sharib")).thenReturn(Optional.of(contact));
+		
+		// when
+		Contact returnedContact = service.get("SHARIB").get();
+		
+		// then
+		assertEquals("sharib", returnedContact.getNickName());
+	}
 }
