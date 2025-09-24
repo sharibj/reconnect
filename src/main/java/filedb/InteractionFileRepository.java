@@ -51,13 +51,27 @@ public class InteractionFileRepository implements InteractionRepository {
             case 0 -> builder.id(token);
             case 1 -> builder.contact(token);
             case 2 -> builder.timeStamp("null".equals(token) ? new java.util.Date().getTime() : Long.parseLong(token));
-            case 3 -> builder.notes(token);
+            case 3 -> builder.notes(unescapeNewlines(token));
             default -> builder;
         };
     }
 
     private String interactionToLine(Interaction interaction) {
-        return interaction.getId() + DELIMITER + interaction.getContact() + DELIMITER + interaction.getTimeStamp() + DELIMITER + interaction.getNotes();
+        return interaction.getId() + DELIMITER + interaction.getContact() + DELIMITER + interaction.getTimeStamp() + DELIMITER + escapeNewlines(interaction.getNotes());
+    }
+
+    private String escapeNewlines(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replace("\n", "\\n").replace("\r", "\\r");
+    }
+
+    private String unescapeNewlines(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return text.replace("\\n", "\n").replace("\\r", "\r");
     }
 
 

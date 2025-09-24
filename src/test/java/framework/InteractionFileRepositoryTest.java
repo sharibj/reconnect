@@ -129,5 +129,41 @@ class InteractionFileRepositoryTest {
         assertTrue(lines.get(1).startsWith("test2±contact2±"));
     }
 
+	@Test
+	void whenMultilineInteraction_thenSaveWithNewlineCharacters() throws IOException {
+		// given
+		FileRepositoryUtils.appendLines(List.of(), FILE_PATH, FILE_NAME);
+		InteractionFileRepository newRepository = new InteractionFileRepository(FILE_PATH, FILE_NAME);
+		String notesWithNewline = "This is a note\nwith a newline character.";
+		Interaction interaction = Interaction.builder().id("testNewline").contact("contactNewline").notes(notesWithNewline).build();
+		newRepository.save(interaction);
 
+		// when
+		newRepository.commit();
+
+		// then
+		List<String> lines = FileRepositoryUtils.readLines(FILE_PATH, FILE_NAME);
+		assertEquals(1, lines.size());
+		assertTrue(lines.get(0).contains("testNewline±contactNewline±"));
+		assertTrue(lines.get(0).contains("This is a note\\nwith a newline character."));
+	}
+	@Test
+	void whenMultilineInteraction_thenReadWithNewlineCharacters() throws IOException {
+		// given
+		String notesWithNewline = "This is a note\\nwith a newline character.";
+		BufferedWriter writer = new BufferedWriter(new FileWriter(new File(FILE_PATH, FILE_NAME)));
+		writer.append("testReadNewline± contactReadNewline±123456789±" + notesWithNewline + "\n");
+		writer.close();
+		InteractionFileRepository newRepository = new InteractionFileRepository(FILE_PATH, FILE_NAME);
+
+		// when
+		Optional<Interaction> interactionOptional = newRepository.find("testReadNewline");
+
+		// then
+		assertTrue(interactionOptional.isPresent());
+		Interaction interaction = interactionOptional.get();
+		assertEquals("testReadNewline", interaction.getId());
+		assertEquals("contactReadNewline", interaction.getContact());
+		assertEquals("This is a note\nwith a newline character.", interaction.getNotes());
+	}
 }
