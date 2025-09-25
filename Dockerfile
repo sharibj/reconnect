@@ -17,7 +17,7 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 # Copy data directory if it exists (for file-based storage)
-COPY data ./data
+#COPY data ./data
 
 # Build the application with Spring Boot plugin
 RUN mvn clean package spring-boot:repackage -DskipTests
