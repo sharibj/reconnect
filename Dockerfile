@@ -20,7 +20,7 @@ COPY src ./src
 #COPY data ./data
 
 # Build the application with Spring Boot plugin
-mvn clean package spring-boot:repackage -DskipTests -Dspring-boot.run.profiles=prod
+RUN mvn clean package spring-boot:repackage -DskipTests -Dspring-boot.run.profiles=prod
 
 # Create a directory for the application
 RUN mkdir -p /app/runtime
