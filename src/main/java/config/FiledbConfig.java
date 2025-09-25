@@ -2,10 +2,12 @@ package config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import domain.contact.ContactDomainService;
 import domain.group.GroupDomainService;
 import domain.interaction.InteractionDomainService;
+import domain.ReconnectDomainService;
 import filedb.ContactFileRepository;
 import filedb.ContactFileService;
 import filedb.GroupFileRepository;
@@ -14,6 +16,7 @@ import filedb.InteractionFileRepository;
 import filedb.InteractionFileService;
 
 @Configuration
+@Profile("dev")
 public class FiledbConfig {
     private static final String DATA_DIR = "data";
 
@@ -48,5 +51,11 @@ public class FiledbConfig {
     public InteractionDomainService interactionDomainService(InteractionFileRepository interactionRepository,
             ContactFileRepository contactRepository) {
         return new InteractionFileService(interactionRepository, contactRepository);
+    }
+
+    @Bean
+    public ReconnectDomainService reconnectDomainService(InteractionDomainService interactionDomainService,
+            ContactDomainService contactDomainService, GroupDomainService groupDomainService) {
+        return new ReconnectDomainService(interactionDomainService, contactDomainService, groupDomainService);
     }
 }

@@ -20,7 +20,7 @@ COPY src ./src
 #COPY data ./data
 
 # Build the application with Spring Boot plugin
-RUN mvn clean package spring-boot:repackage -DskipTests
+mvn clean package spring-boot:repackage -DskipTests -Dspring-boot.run.profiles=prod
 
 # Create a directory for the application
 RUN mkdir -p /app/runtime
@@ -36,11 +36,11 @@ RUN cp -r data /app/runtime/ 2>/dev/null || true
 WORKDIR /app/runtime
 
 # Expose the port (Spring Boot default is 8080)
-EXPOSE 8080
+EXPOSE ${PORT:-8080}
 
 # Set environment variables for production
 ENV SPRING_PROFILES_ACTIVE=prod
-ENV SERVER_PORT=8080
+ENV SERVER_PORT=${PORT:-8080}
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]
