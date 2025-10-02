@@ -28,3 +28,15 @@ Enter Bearer followed by your token (e.g., Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6Ik
 Click "Authorize"
 Now you can successfully call all protected API endpoints
 The authentication endpoints (/api/auth/login and /api/auth/register) remain publicly accessible so you can get your initial JWT token, while all other endpoints will now properly accept the JWT token you provide through Swagger UI's authorization feature.
+
+
+```shell
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+
+| Profile | Authentication DB | Business Data DB | Storage Type |
+  |---------|-------------------|------------------|--------------|
+| dev     | H2 (in-memory)    | Files            | Hybrid       |
+| prod    | PostgreSQL        | PostgreSQL       | All Database |
+| test    | H2 (in-memory)    | H2 (in-memory)   | All Database |

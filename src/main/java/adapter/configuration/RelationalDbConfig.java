@@ -1,4 +1,4 @@
-package config;
+package adapter.configuration;
 
 import domain.ReconnectDomainService;
 import domain.contact.ContactDomainService;
