@@ -1,5 +1,5 @@
-# Use OpenJDK 21 as the base image
-FROM openjdk:21-jdk-slim
+# Use OpenJDK 17 as the base image (matching pom.xml configuration)
+FROM openjdk:17-jdk-slim
 
 # Set working directory
 WORKDIR /app
@@ -36,11 +36,11 @@ RUN cp -r data /app/runtime/ 2>/dev/null || true
 WORKDIR /app/runtime
 
 # Expose the port (Spring Boot default is 8080)
-EXPOSE ${PORT:-8080}
+EXPOSE 8080
 
 # Set environment variables for production
 ENV SPRING_PROFILES_ACTIVE=prod
-ENV SERVER_PORT=${PORT:-8080}
+ENV SERVER_PORT=8080
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]
