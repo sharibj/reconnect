@@ -8,9 +8,9 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import domain.group.Group;
-import filedb.ContactFileRepository;
-import filedb.GroupFileRepository;
-import filedb.GroupFileService;
+import adapter.secondary.persistence.file.ContactFileRepository;
+import adapter.secondary.persistence.file.GroupFileRepository;
+import adapter.secondary.persistence.file.GroupFileService;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 

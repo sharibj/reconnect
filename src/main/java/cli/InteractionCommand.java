@@ -11,9 +11,9 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import domain.interaction.Interaction;
-import filedb.ContactFileRepository;
-import filedb.InteractionFileRepository;
-import filedb.InteractionFileService;
+import adapter.secondary.persistence.file.ContactFileRepository;
+import adapter.secondary.persistence.file.InteractionFileRepository;
+import adapter.secondary.persistence.file.InteractionFileService;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;

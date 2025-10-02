@@ -2,7 +2,7 @@ package framework;
 
 import org.junit.jupiter.api.Test;
 
-import filedb.FileRepositoryUtils;
+import adapter.secondary.persistence.file.FileRepositoryUtils;
 
 import java.io.*;
 import java.util.List;

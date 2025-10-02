@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.group.Group;
-import filedb.FileRepositoryUtils;
-import filedb.GroupFileRepository;
+import adapter.secondary.persistence.file.FileRepositoryUtils;
+import adapter.secondary.persistence.file.GroupFileRepository;
 
 class GroupFileRepositoryTest {
 

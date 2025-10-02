@@ -2,12 +2,12 @@ package cli;
 
 import domain.ReconnectDomainService;
 import domain.ReconnectModel;
-import filedb.ContactFileRepository;
-import filedb.ContactFileService;
-import filedb.GroupFileRepository;
-import filedb.GroupFileService;
-import filedb.InteractionFileRepository;
-import filedb.InteractionFileService;
+import adapter.secondary.persistence.file.ContactFileRepository;
+import adapter.secondary.persistence.file.ContactFileService;
+import adapter.secondary.persistence.file.GroupFileRepository;
+import adapter.secondary.persistence.file.GroupFileService;
+import adapter.secondary.persistence.file.InteractionFileRepository;
+import adapter.secondary.persistence.file.InteractionFileService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;

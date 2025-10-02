@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import domain.contact.Contact;
-import filedb.ContactFileRepository;
-import filedb.FileRepositoryUtils;
+import adapter.secondary.persistence.file.ContactFileRepository;
+import adapter.secondary.persistence.file.FileRepositoryUtils;
 
 class ContactFileRepositoryTest {
 
