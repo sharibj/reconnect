@@ -33,10 +33,15 @@ import spring.dto.UpdateContactDTO;
 import spring.dto.UpdateGroupDTO;
 import spring.dto.UpdateInteractionDTO;
 import spring.exception.BusinessException;
-import spring.service.ContactService;
-import spring.service.GroupService;
-import spring.service.InteractionService;
-import spring.service.ReconnectService;
+import domain.contact.ContactDomainService;
+import domain.group.GroupDomainService;
+import domain.interaction.InteractionDomainService;
+import domain.ReconnectDomainService;
+import spring.mapper.DomainMapper;
+import domain.contact.Contact;
+import domain.group.Group;
+import domain.interaction.Interaction;
+import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -45,16 +50,16 @@ import spring.service.ReconnectService;
 public class ReconnectController {
 
     @Autowired
-    private ContactService contactService;
+    private ContactDomainService contactDomainService;
 
     @Autowired
-    private InteractionService interactionService;
+    private InteractionDomainService interactionDomainService;
 
     @Autowired
-    private GroupService groupService;
+    private GroupDomainService groupDomainService;
 
     @Autowired
-    private ReconnectService reconnectService;
+    private ReconnectDomainService reconnectDomainService;
 
     @Operation(summary = "List all contacts")
     @ApiResponses(value = {
@@ -64,7 +69,9 @@ public class ReconnectController {
     public ResponseEntity<List<ContactDTO>> listContacts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<ContactDTO> allContacts = contactService.getAllContacts();
+        List<ContactDTO> allContacts = contactDomainService.getAll().stream()
+                .map(DomainMapper::toDTO)
+                .toList();
         int start = page * size;
         int end = Math.min(start + size, allContacts.size());
         return ResponseEntity.ok(allContacts.subList(start, end));
@@ -77,7 +84,17 @@ public class ReconnectController {
     })
     @PostMapping("/contacts")
     public ResponseEntity<ContactDTO> addContact(@RequestBody CreateContactDTO createContactDTO) {
-        return ResponseEntity.ok(contactService.addContact(createContactDTO));
+        try {
+            Contact contact = Contact.builder()
+                .nickName(createContactDTO.getNickName())
+                .group(createContactDTO.getGroup())
+                .details(createContactDTO.getDetails() != null ? DomainMapper.toDomain(createContactDTO.getDetails()) : null)
+                .build();
+            contactDomainService.add(contact);
+            return ResponseEntity.ok(DomainMapper.toDTO(contact));
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Update an existing contact")
@@ -90,18 +107,23 @@ public class ReconnectController {
             @Schema(description = "Nickname of the contact to update", required = true)
             @PathVariable(name = "nickName") String nickName,
             @RequestBody UpdateContactDTO updateContactDTO) {
-        // Get existing contact
-        ContactDTO existingContact = contactService.getContact(nickName);
-        if (existingContact == null) {
-            throw new BusinessException("Contact not found: " + nickName);
+        try {
+            // Get existing contact
+            Contact existingContact = contactDomainService.get(nickName)
+                    .orElseThrow(() -> new BusinessException("Contact not found: " + nickName));
+
+            // Create updated contact only with fields that are provided in the request
+            Contact updatedContact = Contact.builder()
+                    .nickName(nickName)
+                    .group(updateContactDTO.getGroup() != null ? updateContactDTO.getGroup() : existingContact.getGroup())
+                    .details(updateContactDTO.getDetails() != null ? DomainMapper.toDomain(updateContactDTO.getDetails()) : existingContact.getDetails())
+                    .build();
+
+            contactDomainService.update(updatedContact);
+            return ResponseEntity.ok(DomainMapper.toDTO(updatedContact));
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
         }
-
-        // Create updated DTO only with fields that are provided in the request
-        String updatedGroup = updateContactDTO.getGroup() != null ? updateContactDTO.getGroup() : existingContact.getGroup();
-        ContactDetailsDTO updatedDetails = updateContactDTO.getDetails() != null ? updateContactDTO.getDetails() : existingContact.getDetails();
-
-        ContactDTO updatedDTO = new ContactDTO(nickName, updatedGroup, updatedDetails);
-        return ResponseEntity.ok(contactService.updateContact(nickName, updatedDTO));
     }
 
     @Operation(summary = "Delete a contact")
@@ -113,8 +135,12 @@ public class ReconnectController {
     public ResponseEntity<Void> deleteContact(
             @Schema(description = "Nickname of the contact to delete", required = true)
             @PathVariable(name = "nickName") String nickName) {
-        contactService.deleteContact(nickName);
-        return ResponseEntity.noContent().build();
+        try {
+            contactDomainService.remove(nickName);
+            return ResponseEntity.noContent().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "List interactions for a contact")
@@ -128,10 +154,16 @@ public class ReconnectController {
             @PathVariable(name = "nickName") String nickName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<InteractionDTO> allInteractions = interactionService.getAllInteractions(nickName);
-        int start = page * size;
-        int end = Math.min(start + size, allInteractions.size());
-        return ResponseEntity.ok(allInteractions.subList(start, end));
+        try {
+            List<InteractionDTO> allInteractions = interactionDomainService.getAll(nickName).stream()
+                    .map(DomainMapper::toDTO)
+                    .toList();
+            int start = page * size;
+            int end = Math.min(start + size, allInteractions.size());
+            return ResponseEntity.ok(allInteractions.subList(start, end));
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Add a new interaction")
@@ -143,8 +175,19 @@ public class ReconnectController {
     })
     @PostMapping(value = "/interactions", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addInteraction(@RequestBody CreateInteractionDTO createInteractionDTO) {
-        interactionService.addInteraction(createInteractionDTO);
-        return ResponseEntity.ok().build();
+        try {
+            Interaction interaction = Interaction.builder()
+                    .contact(createInteractionDTO.getContact())
+                    .timeStamp(createInteractionDTO.getTimeStamp() != null ? Long.parseLong(createInteractionDTO.getTimeStamp()) : null)
+                    .notes(createInteractionDTO.getNotes())
+                    .interactionDetails(createInteractionDTO.getInteractionDetails() != null ?
+                        DomainMapper.toDomain(createInteractionDTO.getInteractionDetails()) : null)
+                    .build();
+            interactionDomainService.add(interaction);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Update an existing interaction")
@@ -158,17 +201,20 @@ public class ReconnectController {
             @Schema(description = "ID of the interaction to update", required = true)
             @PathVariable(name = "id") String id,
             @RequestBody UpdateInteractionDTO updateInteractionDTO) {
-        // Create a new DTO with the ID from path variable
-        InteractionDTO interactionDTO = new InteractionDTO(
-                id,
-                updateInteractionDTO.getContact(),
-                updateInteractionDTO.getTimeStamp(),
-                updateInteractionDTO.getNotes(),
-                updateInteractionDTO.getInteractionDetails(),
-                ""
-        );
-        interactionService.updateInteraction(id, interactionDTO);
-        return ResponseEntity.ok().build();
+        try {
+            Interaction interaction = Interaction.builder()
+                    .id(id)
+                    .contact(updateInteractionDTO.getContact())
+                    .timeStamp(updateInteractionDTO.getTimeStamp() != null ? Long.parseLong(updateInteractionDTO.getTimeStamp()) : null)
+                    .notes(updateInteractionDTO.getNotes())
+                    .interactionDetails(updateInteractionDTO.getInteractionDetails() != null ?
+                        DomainMapper.toDomain(updateInteractionDTO.getInteractionDetails()) : null)
+                    .build();
+            interactionDomainService.update(interaction);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Delete an interaction")
@@ -180,8 +226,12 @@ public class ReconnectController {
     public ResponseEntity<Void> deleteInteraction(
             @Schema(description = "ID of the interaction to delete", required = true)
             @PathVariable(name = "id") String id) {
-        interactionService.deleteInteraction(id);
-        return ResponseEntity.noContent().build();
+        try {
+            interactionDomainService.remove(id);
+            return ResponseEntity.noContent().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "List all groups")
@@ -192,11 +242,12 @@ public class ReconnectController {
     public ResponseEntity<List<GroupDTO>> listGroups(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Set<GroupDTO> allGroups = groupService.getAllGroups();
-        List<GroupDTO> groupsList = allGroups.stream().toList();
+        List<GroupDTO> allGroups = groupDomainService.getAll().stream()
+                .map(DomainMapper::toDTO)
+                .toList();
         int start = page * size;
-        int end = Math.min(start + size, groupsList.size());
-        return ResponseEntity.ok(groupsList.subList(start, end));
+        int end = Math.min(start + size, allGroups.size());
+        return ResponseEntity.ok(allGroups.subList(start, end));
     }
 
     @Operation(summary = "Add a new group")
@@ -207,8 +258,16 @@ public class ReconnectController {
     })
     @PostMapping("/groups")
     public ResponseEntity<Void> addGroup(@RequestBody GroupDTO groupDTO) {
-        groupService.addGroup(groupDTO);
-        return ResponseEntity.ok().build();
+        try {
+            Group group = Group.builder()
+                    .name(groupDTO.getName())
+                    .frequencyInDays(groupDTO.getFrequencyInDays())
+                    .build();
+            groupDomainService.add(group);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Update an existing group")
@@ -222,8 +281,20 @@ public class ReconnectController {
             @Schema(description = "Name of the group to update", required = true)
             @PathVariable(name = "name") String name,
             @RequestBody UpdateGroupDTO updateGroupDTO) {
-        groupService.updateGroup(name, updateGroupDTO);
-        return ResponseEntity.ok().build();
+        try {
+            Group existingGroup = groupDomainService.get(name);
+
+            Group updatedGroup = Group.builder()
+                    .name(name)
+                    .frequencyInDays(updateGroupDTO.getFrequencyInDays() != null ?
+                        updateGroupDTO.getFrequencyInDays() : existingGroup.getFrequencyInDays())
+                    .build();
+
+            groupDomainService.update(updatedGroup);
+            return ResponseEntity.ok().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Delete a group")
@@ -235,8 +306,12 @@ public class ReconnectController {
     public ResponseEntity<Void> deleteGroup(
             @Schema(description = "Name of the group to delete", required = true)
             @PathVariable(name = "name") String name) {
-        groupService.deleteGroup(name);
-        return ResponseEntity.noContent().build();
+        try {
+            groupDomainService.remove(name);
+            return ResponseEntity.noContent().build();
+        } catch (IOException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
     @Operation(summary = "Get out of touch contacts")
@@ -247,7 +322,9 @@ public class ReconnectController {
     public ResponseEntity<List<ReconnectModelDTO>> getOutOfTouchContacts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<ReconnectModelDTO> allContacts = reconnectService.getOutOfTouchContacts();
+        List<ReconnectModelDTO> allContacts = reconnectDomainService.getOutOfTouchContactList().stream()
+                .map(DomainMapper::toDTO)
+                .toList();
         int start = page * size;
         int end = Math.min(start + size, allContacts.size());
         return ResponseEntity.ok(allContacts.subList(start, end));
