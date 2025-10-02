@@ -16,6 +16,8 @@ public class Interaction {
     @Builder.Default
     private String id = UUID.randomUUID().toString();
     @NonNull
+    private String username;
+    @NonNull
     private String contact;
     @Builder.Default
     private Long timeStamp = new Date().getTime();
@@ -23,9 +25,6 @@ public class Interaction {
     private String notes = "";
     @Builder.Default
     private InteractionDetails interactionDetails = new InteractionDetails();
-    @NonNull
-    @Builder.Default
-    private String username = "default_user";
 
     public String toHumanReadableString() {
         return "ID = " + this.id + "\n" +

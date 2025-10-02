@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface JpaContactRepository extends JpaRepository<ContactEntity, Long> {
-    Optional<ContactEntity> findByNickNameAndUsername(String nickName, String username);
-    List<ContactEntity> findByUsername(String username);
-    void deleteByNickNameAndUsername(String nickName, String username);
+    Optional<ContactEntity> findByNickName(String nickName);
+    void deleteByNickName(String nickName);
 }

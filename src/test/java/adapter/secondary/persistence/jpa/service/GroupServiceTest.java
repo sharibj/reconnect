@@ -36,7 +36,6 @@ class GroupServiceTest {
         Group group = Group.builder()
             .name("friends")
             .frequencyInDays(7)
-            .username("test_user")
             .build();
 
         // When
@@ -56,13 +55,11 @@ class GroupServiceTest {
         Group group1 = Group.builder()
             .name("friends")
             .frequencyInDays(7)
-            .username("test_user")
             .build();
 
         Group group2 = Group.builder()
             .name("family")
             .frequencyInDays(14)
-            .username("test_user")
             .build();
 
         groupService.save(group1);
@@ -83,7 +80,6 @@ class GroupServiceTest {
         Group group = Group.builder()
             .name("testgroup")
             .frequencyInDays(7)
-            .username("test_user")
             .build();
 
         groupService.save(group);

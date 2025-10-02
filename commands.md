@@ -31,7 +31,7 @@ The authentication endpoints (/api/auth/login and /api/auth/register) remain pub
 
 
 ```shell
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+mvn spring-boot:run -Dspring-boot.run.profiles=prod
 ```
 
 

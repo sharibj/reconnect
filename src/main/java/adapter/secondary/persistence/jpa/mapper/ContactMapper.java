@@ -7,6 +7,7 @@ import domain.contact.ContactInfo;
 import adapter.secondary.persistence.jpa.entity.ContactEntity;
 import adapter.secondary.persistence.jpa.entity.ContactDetailsEntity;
 import adapter.secondary.persistence.jpa.entity.ContactInfoEntity;
+import adapter.primary.http.security.TenantContext;
 
 @Component
 public class ContactMapper {
@@ -29,10 +30,10 @@ public class ContactMapper {
         }
 
         return Contact.builder()
+            .username(entity.getUsername())
             .nickName(entity.getNickName())
             .group(entity.getGroup())
             .details(details)
-            .username(entity.getUsername())
             .build();
     }
 
@@ -40,9 +41,9 @@ public class ContactMapper {
         if (model == null) return null;
         
         ContactEntity entity = new ContactEntity();
+        entity.setUsername(model.getUsername() != null ? model.getUsername() : TenantContext.getCurrentTenant());
         entity.setNickName(model.getNickName());
         entity.setGroup(model.getGroup());
-        entity.setUsername(model.getUsername());
         
         if (model.getDetails() != null) {
             ContactDetailsEntity details = new ContactDetailsEntity();

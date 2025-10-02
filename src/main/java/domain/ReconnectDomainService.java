@@ -10,7 +10,9 @@ import domain.group.GroupDomainService;
 import domain.interaction.Interaction;
 import domain.interaction.InteractionDomainService;
 import lombok.SneakyThrows;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ReconnectDomainService {
     private final InteractionDomainService interactionDomainService;
     private final ContactDomainService contactDomainService;

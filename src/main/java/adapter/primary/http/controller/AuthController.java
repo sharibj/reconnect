@@ -13,8 +13,8 @@ import adapter.primary.http.dto.auth.AuthResponse;
 import adapter.primary.http.dto.auth.LoginRequest;
 import adapter.primary.http.dto.auth.RegisterRequest;
 import adapter.primary.http.security.JwtUtil;
-import adapter.primary.http.security.User;
-import adapter.primary.http.security.UserRepository;
+import adapter.primary.http.security.Tenant;
+import adapter.primary.http.security.TenantRepository;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,34 +22,29 @@ import adapter.primary.http.security.UserRepository;
 public class AuthController {
 	
 	private final AuthenticationManager authenticationManager;
-	private final UserRepository userRepository;
+	private final TenantRepository tenantRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 	
 	
 	@PostMapping("/register")
 	public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-		if (userRepository.existsByUsername(request.getUsername())) {
+		if (tenantRepository.existsByUsername(request.getUsername())) {
 			return ResponseEntity.badRequest()
 					.body(new AuthResponse(null, null, "Username already exists"));
 		}
-		
-		if (userRepository.existsByEmail(request.getEmail())) {
-			return ResponseEntity.badRequest()
-					.body(new AuthResponse(null, null, "Email already exists"));
-		}
-		
-		User user = User.builder()
+
+		Tenant tenant = Tenant.builder()
 				.username(request.getUsername())
 				.password(passwordEncoder.encode(request.getPassword()))
 				.email(request.getEmail())
 				.build();
-		
-		userRepository.save(user);
-		
-		String token = jwtUtil.generateToken(user.getUsername());
-		
-		return ResponseEntity.ok(new AuthResponse(token, user.getUsername(), "User registered successfully"));
+
+		tenantRepository.save(tenant);
+
+		String token = jwtUtil.generateToken(tenant.getUsername());
+
+		return ResponseEntity.ok(new AuthResponse(token, tenant.getUsername(), "User registered successfully"));
 	}
 	
 	

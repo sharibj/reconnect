@@ -7,7 +7,6 @@ import java.util.List;
 
 @Repository
 public interface JpaInteractionRepository extends JpaRepository<InteractionEntity, Long> {
-    List<InteractionEntity> findByContactAndUsername(String contact, String username);
-    List<InteractionEntity> findByUsername(String username);
-    void deleteByContactAndUsername(String contact, String username);
+    List<InteractionEntity> findByContact(String contact);
+    void deleteByContact(String contact);
 }

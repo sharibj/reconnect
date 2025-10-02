@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-create-tenants-table" author="system">
+        <createTable tableName="tenants">
+            <column name="id" type="bigserial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_name" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="database_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="tenants" indexName="idx_tenants_tenant_name">
+            <column name="tenant_name"/>
+        </createIndex>
+
+        <createIndex tableName="tenants" indexName="idx_tenants_username">
+            <column name="username"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="001-insert-sample-tenant" author="system">
+        <insert tableName="tenants">
+            <column name="tenant_name" value="demo_company"/>
+            <column name="username" value="demo"/>
+            <column name="password" value="$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9P8zGIgPsabjZBm"/>
+            <column name="email" value="demo@example.com"/>
+            <column name="database_name" value="tenant_demo_company"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

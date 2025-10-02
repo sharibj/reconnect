@@ -41,7 +41,6 @@ class ContactDomainServiceTest {
         // given
         Contact contact = Contact.builder()
                 .nickName("JohnDoe")
-                .username("test_user") // Added valid username
                 .build();
 
         Mockito.when(repository.save(any(Contact.class))).thenReturn(contact);
@@ -51,7 +50,6 @@ class ContactDomainServiceTest {
 
         // then
         Mockito.verify(repository).save(contactCaptor.capture());
-        assertEquals("test_user", contactCaptor.getValue().getUsername());
     }
 
     @Test

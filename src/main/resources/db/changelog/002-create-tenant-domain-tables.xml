@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- This changelog creates domain tables with tenant_id discriminator columns -->
+    <!-- All tenants share the same database with row-level tenant isolation -->
+
+    <changeSet id="002-create-contacts-table" author="system">
+        <createTable tableName="contacts">
+            <column name="id" type="bigserial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nick_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(255)"/>
+            <column name="last_name" type="varchar(255)"/>
+            <column name="email" type="varchar(255)"/>
+            <column name="phone" type="varchar(255)"/>
+            <column name="notes" type="text"/>
+            <column name="group_name" type="varchar(255)"/>
+        </createTable>
+
+        <createIndex tableName="contacts" indexName="idx_contacts_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="contacts" indexName="idx_contacts_nick_name">
+            <column name="nick_name"/>
+        </createIndex>
+
+        <createIndex tableName="contacts" indexName="idx_contacts_group_name">
+            <column name="group_name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="002-create-groups-table" author="system">
+        <createTable tableName="groups">
+            <column name="id" type="bigserial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="frequency_in_days" type="integer"/>
+        </createTable>
+
+        <createIndex tableName="groups" indexName="idx_groups_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="groups" indexName="idx_groups_name">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="002-create-interactions-table" author="system">
+        <createTable tableName="interactions">
+            <column name="id" type="bigserial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact" type="varchar(255)"/>
+            <column name="type" type="varchar(255)"/>
+            <column name="self_initiated" type="boolean"/>
+            <column name="notes" type="text"/>
+            <column name="time_stamp" type="bigint"/>
+        </createTable>
+
+        <createIndex tableName="interactions" indexName="idx_interactions_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+
+        <createIndex tableName="interactions" indexName="idx_interactions_contact">
+            <column name="contact"/>
+        </createIndex>
+
+        <createIndex tableName="interactions" indexName="idx_interactions_timestamp">
+            <column name="time_stamp"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

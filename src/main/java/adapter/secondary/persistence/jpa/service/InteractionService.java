@@ -26,16 +26,14 @@ public class InteractionService implements InteractionRepository {
 	
 	@Override
 	public List<Interaction> findAll() {
-		String currentUser = TenantContext.getCurrentTenant();
-		return repository.findByUsername(currentUser).stream()
+		return repository.findAll().stream()
 				.map(mapper::toModel)
 				.toList();
 	}
 	
 	@Override
 	public List<Interaction> findAll(String contact) {
-		String currentUser = TenantContext.getCurrentTenant();
-		return repository.findByContactAndUsername(contact, currentUser).stream()
+		return repository.findByContact(contact).stream()
 				.map(mapper::toModel)
 				.toList();
 	}
@@ -45,7 +43,6 @@ public class InteractionService implements InteractionRepository {
 		try {
 			Long longId = Long.parseLong(id);
 			return repository.findById(longId)
-					.filter(entity -> entity.getUsername().equals(TenantContext.getCurrentTenant()))
 					.map(mapper::toModel);
 		} catch (NumberFormatException e) {
 			return Optional.empty();
@@ -54,19 +51,15 @@ public class InteractionService implements InteractionRepository {
 	
 	@Override
 	public Interaction save(Interaction interaction) {
-		String currentUser = TenantContext.getCurrentTenant();
 		InteractionEntity entity = mapper.toEntity(interaction);
-		entity.setUsername(currentUser);
 		return mapper.toModel(repository.save(entity));
 	}
 	
 	@Override
 	public Interaction delete(String id) {
-		String currentUser = TenantContext.getCurrentTenant();
 		try {
 			Long longId = Long.parseLong(id);
-			Optional<InteractionEntity> entity = repository.findById(longId)
-					.filter(e -> e.getUsername().equals(currentUser));
+			Optional<InteractionEntity> entity = repository.findById(longId);
 			if (entity.isPresent()) {
 				repository.delete(entity.get());
 				return mapper.toModel(entity.get());

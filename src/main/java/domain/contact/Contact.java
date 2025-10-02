@@ -12,14 +12,13 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Contact {
     @NonNull
+    private String username;
+    @NonNull
     private String nickName;
     @Builder.Default
     @NonNull
     private String group = "";
     private ContactDetails details;
-    @NonNull
-    @Builder.Default
-    private String username = "default_user";
 
 
     public String toHumanReadableString() {

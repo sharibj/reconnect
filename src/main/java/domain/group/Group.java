@@ -11,13 +11,12 @@ import lombok.NonNull;
 public class Group {
     private static final Integer DEFAULT_FREQUENCY = 7;
     @NonNull
+    private String username;
+    @NonNull
     private String name;
     @NonNull
     @Builder.Default
     private Integer frequencyInDays = DEFAULT_FREQUENCY;
-    @NonNull
-    @Builder.Default
-    private String username = "default_user";
 
     public String toHumanReadableString() {
         return "Name = " + this.name + "\n" +

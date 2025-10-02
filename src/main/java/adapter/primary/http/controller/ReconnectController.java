@@ -29,6 +29,7 @@ import adapter.primary.http.dto.InteractionDTO;
 import adapter.primary.http.dto.ReconnectModelDTO;
 import adapter.primary.http.dto.UpdateContactDTO;
 import adapter.primary.http.exception.BusinessException;
+import adapter.primary.http.security.TenantContext;
 import domain.contact.ContactDomainService;
 import domain.group.GroupDomainService;
 import domain.interaction.InteractionDomainService;
@@ -82,6 +83,7 @@ public class ReconnectController {
     public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO createContactDTO) {
         try {
             Contact contact = Contact.builder()
+                .username(TenantContext.getCurrentTenant())
                 .nickName(createContactDTO.getNickName())
                 .group(createContactDTO.getGroup())
                 .details(createContactDTO.getDetails() != null ? DomainMapper.toDomain(createContactDTO.getDetails()) : null)
@@ -110,6 +112,7 @@ public class ReconnectController {
 
             // Create updated contact only with fields that are provided in the request
             Contact updatedContact = Contact.builder()
+                    .username(existingContact.getUsername())
                     .nickName(nickName)
                     .group(updateContactDTO.getGroup() != null ? updateContactDTO.getGroup() : existingContact.getGroup())
                     .details(updateContactDTO.getDetails() != null ? DomainMapper.toDomain(updateContactDTO.getDetails()) : existingContact.getDetails())
@@ -173,6 +176,7 @@ public class ReconnectController {
     public ResponseEntity<Void> addInteraction(@RequestBody InteractionDTO createInteractionDTO) {
         try {
             Interaction interaction = Interaction.builder()
+                    .username(TenantContext.getCurrentTenant())
                     .contact(createInteractionDTO.getContact())
                     .timeStamp(createInteractionDTO.getTimeStamp() != null ? Long.parseLong(createInteractionDTO.getTimeStamp()) : null)
                     .notes(createInteractionDTO.getNotes())
@@ -200,6 +204,7 @@ public class ReconnectController {
         try {
             Interaction interaction = Interaction.builder()
                     .id(id)
+                    .username(TenantContext.getCurrentTenant())
                     .contact(updateInteractionDTO.getContact())
                     .timeStamp(updateInteractionDTO.getTimeStamp() != null ? Long.parseLong(updateInteractionDTO.getTimeStamp()) : null)
                     .notes(updateInteractionDTO.getNotes())
@@ -256,6 +261,7 @@ public class ReconnectController {
     public ResponseEntity<Void> addGroup(@RequestBody GroupDTO groupDTO) {
         try {
             Group group = Group.builder()
+                    .username(TenantContext.getCurrentTenant())
                     .name(groupDTO.getName())
                     .frequencyInDays(groupDTO.getFrequencyInDays())
                     .build();
@@ -281,6 +287,7 @@ public class ReconnectController {
             Group existingGroup = groupDomainService.get(name);
 
             Group updatedGroup = Group.builder()
+                    .username(existingGroup.getUsername())
                     .name(name)
                     .frequencyInDays(updateGroupDTO.getFrequencyInDays() != null ?
                         updateGroupDTO.getFrequencyInDays() : existingGroup.getFrequencyInDays())

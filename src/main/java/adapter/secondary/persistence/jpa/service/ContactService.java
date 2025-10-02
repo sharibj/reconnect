@@ -26,31 +26,26 @@ public class ContactService implements ContactRepository {
 	
 	@Override
 	public Optional<Contact> find(String nickName) {
-		String currentUser = TenantContext.getCurrentTenant();
-		return repository.findByNickNameAndUsername(nickName, currentUser)
+		return repository.findByNickName(nickName)
 				.map(mapper::toModel);
 	}
 	
 	@Override
 	public List<Contact> findAll() {
-		String currentUser = TenantContext.getCurrentTenant();
-		return repository.findByUsername(currentUser).stream()
+		return repository.findAll().stream()
 				.map(mapper::toModel)
 				.toList();
 	}
 	
 	@Override
 	public Contact save(Contact contact) {
-		String currentUser = TenantContext.getCurrentTenant();
 		ContactEntity entity = mapper.toEntity(contact);
-		entity.setUsername(currentUser);
 		return mapper.toModel(repository.save(entity));
 	}
 	
 	@Override
 	public Contact delete(String nickName) {
-		String currentUser = TenantContext.getCurrentTenant();
-		Optional<ContactEntity> entity = repository.findByNickNameAndUsername(nickName, currentUser);
+		Optional<ContactEntity> entity = repository.findByNickName(nickName);
 		if (entity.isPresent()) {
 			repository.delete(entity.get());
 			return mapper.toModel(entity.get());

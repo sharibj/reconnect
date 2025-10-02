@@ -6,6 +6,7 @@ import domain.interaction.InteractionDetails;
 import domain.interaction.InteractionType;
 import adapter.secondary.persistence.jpa.entity.InteractionEntity;
 import adapter.secondary.persistence.jpa.entity.InteractionDetailsEntity;
+import adapter.primary.http.security.TenantContext;
 
 @Component
 public class InteractionMapper {
@@ -22,11 +23,11 @@ public class InteractionMapper {
 
         return Interaction.builder()
             .id(entity.getId() != null ? entity.getId().toString() : null)
+            .username(entity.getUsername())
             .contact(entity.getContact())
             .timeStamp(entity.getTimeStamp())
             .notes(entity.getNotes())
             .interactionDetails(details)
-            .username(entity.getUsername())
             .build();
     }
 
@@ -42,10 +43,10 @@ public class InteractionMapper {
                 // Let the ID be auto-generated for new entities
             }
         }
+        entity.setUsername(model.getUsername() != null ? model.getUsername() : TenantContext.getCurrentTenant());
         entity.setContact(model.getContact());
         entity.setTimeStamp(model.getTimeStamp());
         entity.setNotes(model.getNotes());
-        entity.setUsername(model.getUsername());
         
         if (model.getInteractionDetails() != null) {
             InteractionDetailsEntity detailsEntity = new InteractionDetailsEntity();

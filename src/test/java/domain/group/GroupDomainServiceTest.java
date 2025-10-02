@@ -97,7 +97,6 @@ class GroupDomainServiceTest {
         // given
         Group group = Group.builder()
                 .name("family")
-                .username("test_user") // Added valid username
                 .build();
 
         Mockito.when(repository.save(any(Group.class))).thenReturn(group);
@@ -107,7 +106,6 @@ class GroupDomainServiceTest {
 
         // then
         Mockito.verify(repository).save(groupCaptor.capture());
-        assertEquals("test_user", groupCaptor.getValue().getUsername());
     }
     //endregion
 

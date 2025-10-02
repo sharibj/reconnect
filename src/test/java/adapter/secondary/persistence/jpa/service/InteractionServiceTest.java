@@ -45,7 +45,6 @@ class InteractionServiceTest {
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes")
             .interactionDetails(details)
-            .username("test_user")
             .build();
 
         // When
@@ -75,7 +74,6 @@ class InteractionServiceTest {
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes 1")
             .interactionDetails(details)
-            .username("test_user")
             .build();
 
         Interaction interaction2 = Interaction.builder()
@@ -83,7 +81,6 @@ class InteractionServiceTest {
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes 2")
             .interactionDetails(details)
-            .username("test_user")
             .build();
 
         interactionService.save(interaction1);
@@ -109,7 +106,6 @@ class InteractionServiceTest {
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes")
             .interactionDetails(details)
-            .username("test_user")
             .build();
 
         Interaction savedInteraction = interactionService.save(interaction);
