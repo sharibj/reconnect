@@ -24,14 +24,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import spring.dto.ContactDTO;
 import spring.dto.ContactDetailsDTO;
-import spring.dto.CreateContactDTO;
-import spring.dto.CreateInteractionDTO;
 import spring.dto.GroupDTO;
 import spring.dto.InteractionDTO;
 import spring.dto.ReconnectModelDTO;
 import spring.dto.UpdateContactDTO;
-import spring.dto.UpdateGroupDTO;
-import spring.dto.UpdateInteractionDTO;
 import spring.exception.BusinessException;
 import domain.contact.ContactDomainService;
 import domain.group.GroupDomainService;
@@ -83,7 +79,7 @@ public class ReconnectController {
             @ApiResponse(responseCode = "400", description = "Invalid contact data")
     })
     @PostMapping("/contacts")
-    public ResponseEntity<ContactDTO> addContact(@RequestBody CreateContactDTO createContactDTO) {
+    public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO createContactDTO) {
         try {
             Contact contact = Contact.builder()
                 .nickName(createContactDTO.getNickName())
@@ -174,7 +170,7 @@ public class ReconnectController {
             @ApiResponse(responseCode = "409", description = "Interaction already exists")
     })
     @PostMapping(value = "/interactions", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addInteraction(@RequestBody CreateInteractionDTO createInteractionDTO) {
+    public ResponseEntity<Void> addInteraction(@RequestBody InteractionDTO createInteractionDTO) {
         try {
             Interaction interaction = Interaction.builder()
                     .contact(createInteractionDTO.getContact())
@@ -200,7 +196,7 @@ public class ReconnectController {
     public ResponseEntity<Void> updateInteraction(
             @Schema(description = "ID of the interaction to update", required = true)
             @PathVariable(name = "id") String id,
-            @RequestBody UpdateInteractionDTO updateInteractionDTO) {
+            @RequestBody InteractionDTO updateInteractionDTO) {
         try {
             Interaction interaction = Interaction.builder()
                     .id(id)
@@ -280,7 +276,7 @@ public class ReconnectController {
     public ResponseEntity<Void> updateGroup(
             @Schema(description = "Name of the group to update", required = true)
             @PathVariable(name = "name") String name,
-            @RequestBody UpdateGroupDTO updateGroupDTO) {
+            @RequestBody GroupDTO updateGroupDTO) {
         try {
             Group existingGroup = groupDomainService.get(name);
 
