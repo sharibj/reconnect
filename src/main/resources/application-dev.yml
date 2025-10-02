@@ -2,15 +2,30 @@ spring:
   config:
     activate:
       on-profile: dev
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+  sql:
+    init:
+      mode: never  # Disable SQL script initialization since we're using JPA
 
 app:
   storage:
     type: file
     location: data/
+  jwt:
+    secret: mySecretKey12345678901234567890123456789012345678901234567890
+    expiration: 86400000  # 24 hours in milliseconds
 
 filedb:
   contacts-file: contacts.txt

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import relationaldb.entity.GroupEntity;
 import relationaldb.mapper.GroupMapper;
 import relationaldb.repository.JpaGroupRepository;
+import spring.security.TenantContext;
 
 @Service
 @Profile("prod")
@@ -18,38 +19,38 @@ public class GroupService implements GroupRepository {
 	private final JpaGroupRepository repository;
 	private final GroupMapper mapper;
 	
-	
 	public GroupService(JpaGroupRepository repository, GroupMapper mapper) {
 		this.repository = repository;
 		this.mapper = mapper;
 	}
 	
-	
 	@Override
 	public Optional<Group> find(String name) {
-		return repository.findByName(name)
+		String currentUser = TenantContext.getCurrentTenant();
+		return repository.findByNameAndUsername(name, currentUser)
 				.map(mapper::toModel);
 	}
 	
-	
 	@Override
 	public List<Group> findAll() {
-		return repository.findAll().stream()
+		String currentUser = TenantContext.getCurrentTenant();
+		return repository.findByUsername(currentUser).stream()
 				.map(mapper::toModel)
 				.toList();
 	}
 	
-	
 	@Override
 	public Group save(Group group) {
+		String currentUser = TenantContext.getCurrentTenant();
 		GroupEntity entity = mapper.toEntity(group);
+		entity.setUsername(currentUser);
 		return mapper.toModel(repository.save(entity));
 	}
 	
-	
 	@Override
 	public Group delete(String name) {
-		Optional<GroupEntity> entity = repository.findByName(name);
+		String currentUser = TenantContext.getCurrentTenant();
+		Optional<GroupEntity> entity = repository.findByNameAndUsername(name, currentUser);
 		if (entity.isPresent()) {
 			repository.delete(entity.get());
 			return mapper.toModel(entity.get());

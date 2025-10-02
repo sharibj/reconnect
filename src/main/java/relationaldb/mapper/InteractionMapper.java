@@ -21,7 +21,7 @@ public class InteractionMapper {
         }
 
         return Interaction.builder()
-            .id(entity.getId())
+            .id(entity.getId() != null ? entity.getId().toString() : null)
             .contact(entity.getContact())
             .timeStamp(entity.getTimeStamp())
             .notes(entity.getNotes())
@@ -33,18 +33,25 @@ public class InteractionMapper {
         if (model == null) return null;
         
         InteractionEntity entity = new InteractionEntity();
-        entity.setId(model.getId());
+        // Only set ID if it's a valid Long, otherwise let it be auto-generated
+        if (model.getId() != null) {
+            try {
+                entity.setId(Long.parseLong(model.getId()));
+            } catch (NumberFormatException e) {
+                // Let the ID be auto-generated for new entities
+            }
+        }
         entity.setContact(model.getContact());
         entity.setTimeStamp(model.getTimeStamp());
         entity.setNotes(model.getNotes());
         
         if (model.getInteractionDetails() != null) {
-            InteractionDetailsEntity details = new InteractionDetailsEntity();
-            details.setSelfInitiated(model.getInteractionDetails().getSelfInitiated());
+            InteractionDetailsEntity detailsEntity = new InteractionDetailsEntity();
+            detailsEntity.setSelfInitiated(model.getInteractionDetails().getSelfInitiated());
             if (model.getInteractionDetails().getType() != null) {
-                details.setType(model.getInteractionDetails().getType().name());
+                detailsEntity.setType(model.getInteractionDetails().getType().name());
             }
-            entity.setInteractionDetails(details);
+            entity.setInteractionDetails(detailsEntity);
         }
         
         return entity;

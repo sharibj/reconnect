@@ -3,59 +3,62 @@ package config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
 
 import domain.contact.ContactDomainService;
 import domain.group.GroupDomainService;
 import domain.interaction.InteractionDomainService;
 import domain.ReconnectDomainService;
-import filedb.ContactFileRepository;
 import filedb.ContactFileService;
-import filedb.GroupFileRepository;
 import filedb.GroupFileService;
-import filedb.InteractionFileRepository;
 import filedb.InteractionFileService;
+import filedb.multitenant.TenantContactFileRepository;
+import filedb.multitenant.TenantGroupFileRepository;
+import filedb.multitenant.TenantInteractionFileRepository;
 
 @Configuration
 @Profile("dev")
 public class FiledbConfig {
-    private static final String DATA_DIR = "data";
 
     @Bean
-    public ContactFileRepository contactRepository() {
-        return new ContactFileRepository(DATA_DIR, "contacts.txt");
+    @Scope("prototype") // New instance per request to ensure tenant isolation
+    public TenantContactFileRepository contactRepository() {
+        return new TenantContactFileRepository();
     }
 
     @Bean
-    public GroupFileRepository groupRepository() {
-        return new GroupFileRepository(DATA_DIR, "groups.txt");
+    @Scope("prototype")
+    public TenantGroupFileRepository groupRepository() {
+        return new TenantGroupFileRepository();
     }
 
     @Bean
-    public InteractionFileRepository interactionRepository() {
-        return new InteractionFileRepository(DATA_DIR, "interactions.txt");
+    @Scope("prototype")
+    public TenantInteractionFileRepository interactionRepository() {
+        return new TenantInteractionFileRepository();
     }
 
     @Bean
-    public ContactDomainService contactDomainService(ContactFileRepository contactRepository,
-            GroupFileRepository groupRepository) {
-        return new ContactFileService(contactRepository, groupRepository);
+    @Scope("prototype")
+    public ContactDomainService contactDomainService() {
+        return new ContactDomainService(contactRepository(), groupRepository());
     }
 
     @Bean
-    public GroupDomainService groupDomainService(GroupFileRepository groupRepository,
-            ContactFileRepository contactRepository) {
-        return new GroupFileService(groupRepository, contactRepository);
+    @Scope("prototype")
+    public GroupDomainService groupDomainService() {
+        return new GroupDomainService(groupRepository(), contactRepository());
     }
 
     @Bean
-    public InteractionDomainService interactionDomainService(InteractionFileRepository interactionRepository,
-            ContactFileRepository contactRepository) {
-        return new InteractionFileService(interactionRepository, contactRepository);
+    @Scope("prototype")
+    public InteractionDomainService interactionDomainService() {
+        return new InteractionDomainService(interactionRepository(), contactRepository());
     }
 
     @Bean
-    public ReconnectDomainService reconnectDomainService(InteractionDomainService interactionDomainService,
-            ContactDomainService contactDomainService, GroupDomainService groupDomainService) {
-        return new ReconnectDomainService(interactionDomainService, contactDomainService, groupDomainService);
+    @Scope("prototype")
+    public ReconnectDomainService reconnectDomainService() {
+        return new ReconnectDomainService(interactionDomainService(), contactDomainService(), groupDomainService());
     }
 }

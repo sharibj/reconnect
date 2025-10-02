@@ -6,6 +6,8 @@ import relationaldb.entity.InteractionEntity;
 import java.util.List;
 
 @Repository
-public interface JpaInteractionRepository extends JpaRepository<InteractionEntity, String> {
-    List<InteractionEntity> findByContact(String contact);
+public interface JpaInteractionRepository extends JpaRepository<InteractionEntity, Long> {
+    List<InteractionEntity> findByContactAndUsername(String contact, String username);
+    List<InteractionEntity> findByUsername(String username);
+    void deleteByContactAndUsername(String contact, String username);
 }

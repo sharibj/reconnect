@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @Profile("prod")
-@EnableJpaRepositories(basePackages = "relationaldb.repository")
-@EntityScan(basePackages = "relationaldb.entity")
+@EnableJpaRepositories(basePackages = {"relationaldb.repository", "spring.security"})
+@EntityScan(basePackages = {"relationaldb.entity", "spring.security"})
 public class JpaRelationalDbConfig {
 }

@@ -8,8 +8,14 @@ import lombok.Data;
 @Data
 public class InteractionEntity {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
     private String contact;
+    
+    @Column(nullable = false)
+    private String username; // Tenant identifier
+    
     private Long timeStamp;
     private String notes;
     
