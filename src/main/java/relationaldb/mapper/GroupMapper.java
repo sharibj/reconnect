@@ -11,6 +11,7 @@ public class GroupMapper {
         return Group.builder()
             .name(entity.getName())
             .frequencyInDays(entity.getFrequencyInDays())
+            .username(entity.getUsername())
             .build();
     }
 
@@ -19,6 +20,7 @@ public class GroupMapper {
         GroupEntity entity = new GroupEntity();
         entity.setName(model.getName());
         entity.setFrequencyInDays(model.getFrequencyInDays());
+        entity.setUsername(model.getUsername());
         return entity;
     }
 }

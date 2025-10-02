@@ -39,14 +39,19 @@ class ContactDomainServiceTest {
     @Test
     void whenAddContactWithName_thenSaveContact() throws IOException {
         // given
-        service.add(Contact.builder().nickName("sharib").build());
+        Contact contact = Contact.builder()
+                .nickName("JohnDoe")
+                .username("test_user") // Added valid username
+                .build();
+
+        Mockito.when(repository.save(any(Contact.class))).thenReturn(contact);
 
         // when
-        Mockito.verify(repository).save(contactCaptor.capture());
+        service.add(contact);
 
         // then
-        Contact contact = contactCaptor.getValue();
-        assertEquals("sharib", contact.getNickName());
+        Mockito.verify(repository).save(contactCaptor.capture());
+        assertEquals("test_user", contactCaptor.getValue().getUsername());
     }
 
     @Test

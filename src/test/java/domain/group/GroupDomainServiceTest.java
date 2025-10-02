@@ -92,6 +92,23 @@ class GroupDomainServiceTest {
         );
     }
 
+    @Test
+    void whenAddGroupWithName_thenSaveGroup() throws IOException {
+        // given
+        Group group = Group.builder()
+                .name("family")
+                .username("test_user") // Added valid username
+                .build();
+
+        Mockito.when(repository.save(any(Group.class))).thenReturn(group);
+
+        // when
+        service.add(group);
+
+        // then
+        Mockito.verify(repository).save(groupCaptor.capture());
+        assertEquals("test_user", groupCaptor.getValue().getUsername());
+    }
     //endregion
 
     //region remove group

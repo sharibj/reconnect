@@ -7,12 +7,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import domain.group.GroupRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ContactDomainService {
 
     ContactRepository repository;
     GroupRepository groupRepository;
 
+    @Autowired
     public ContactDomainService(final ContactRepository repository, final GroupRepository groupRepository) {
         this.repository = repository;
         this.groupRepository = groupRepository;

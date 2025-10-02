@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import domain.group.Group;
 import relationaldb.config.TestRelationalDbConfig;
+import spring.security.TenantContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,8 @@ class GroupServiceTest {
 
     @BeforeEach
     void setUp() {
+        // Set up tenant context for multi-tenant tests
+        TenantContext.setCurrentTenant("test_user");
         // Clear any existing data
         groupService.findAll().forEach(group -> groupService.delete(group.getName()));
     }
@@ -33,6 +36,7 @@ class GroupServiceTest {
         Group group = Group.builder()
             .name("friends")
             .frequencyInDays(7)
+            .username("test_user")
             .build();
 
         // When
@@ -52,11 +56,13 @@ class GroupServiceTest {
         Group group1 = Group.builder()
             .name("friends")
             .frequencyInDays(7)
+            .username("test_user")
             .build();
 
         Group group2 = Group.builder()
             .name("family")
             .frequencyInDays(14)
+            .username("test_user")
             .build();
 
         groupService.save(group1);
@@ -77,6 +83,7 @@ class GroupServiceTest {
         Group group = Group.builder()
             .name("testgroup")
             .frequencyInDays(7)
+            .username("test_user")
             .build();
 
         groupService.save(group);

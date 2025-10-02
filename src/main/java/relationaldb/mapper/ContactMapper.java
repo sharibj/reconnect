@@ -32,6 +32,7 @@ public class ContactMapper {
             .nickName(entity.getNickName())
             .group(entity.getGroup())
             .details(details)
+            .username(entity.getUsername())
             .build();
     }
 
@@ -41,6 +42,7 @@ public class ContactMapper {
         ContactEntity entity = new ContactEntity();
         entity.setNickName(model.getNickName());
         entity.setGroup(model.getGroup());
+        entity.setUsername(model.getUsername());
         
         if (model.getDetails() != null) {
             ContactDetailsEntity details = new ContactDetailsEntity();

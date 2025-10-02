@@ -4,9 +4,11 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 @Builder(toBuilder = true)
 @Getter
+@Setter
 @EqualsAndHashCode
 public class Contact {
     @NonNull
@@ -15,6 +17,9 @@ public class Contact {
     @NonNull
     private String group = "";
     private ContactDetails details;
+    @NonNull
+    @Builder.Default
+    private String username = "default_user";
 
 
     public String toHumanReadableString() {

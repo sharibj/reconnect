@@ -23,6 +23,9 @@ public class Interaction {
     private String notes = "";
     @Builder.Default
     private InteractionDetails interactionDetails = new InteractionDetails();
+    @NonNull
+    @Builder.Default
+    private String username = "default_user";
 
     public String toHumanReadableString() {
         return "ID = " + this.id + "\n" +

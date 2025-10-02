@@ -17,8 +17,8 @@ import relationaldb.repository.JpaInteractionRepository;
 
 @Configuration
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = "relationaldb.repository")
-@EntityScan(basePackages = "relationaldb.entity")
+@EnableJpaRepositories(basePackages = {"relationaldb.repository", "spring.security"})
+@EntityScan(basePackages = {"relationaldb.entity", "spring.security"})
 public class TestRelationalDbConfig {
 
     @Bean

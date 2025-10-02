@@ -10,6 +10,7 @@ import domain.contact.Contact;
 import domain.contact.ContactDetails;
 import domain.contact.ContactInfo;
 import relationaldb.config.TestRelationalDbConfig;
+import spring.security.TenantContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,8 @@ class ContactServiceTest {
 
     @BeforeEach
     void setUp() {
+        // Set up tenant context for multi-tenant tests
+        TenantContext.setCurrentTenant("test_user");
         // Clear any existing data
         contactService.findAll().forEach(contact -> contactService.delete(contact.getNickName()));
     }
@@ -46,6 +49,7 @@ class ContactServiceTest {
             .nickName("johndoe")
             .group("friends")
             .details(details)
+            .username("test_user")
             .build();
 
         // When
@@ -67,11 +71,13 @@ class ContactServiceTest {
         Contact contact1 = Contact.builder()
             .nickName("contact1")
             .group("friends")
+            .username("test_user")
             .build();
 
         Contact contact2 = Contact.builder()
             .nickName("contact2")
             .group("family")
+            .username("test_user")
             .build();
 
         contactService.save(contact1);
@@ -92,6 +98,7 @@ class ContactServiceTest {
         Contact contact = Contact.builder()
             .nickName("testcontact")
             .group("test")
+            .username("test_user")
             .build();
 
         contactService.save(contact);

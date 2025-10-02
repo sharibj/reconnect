@@ -15,6 +15,9 @@ public class Group {
     @NonNull
     @Builder.Default
     private Integer frequencyInDays = DEFAULT_FREQUENCY;
+    @NonNull
+    @Builder.Default
+    private String username = "default_user";
 
     public String toHumanReadableString() {
         return "Name = " + this.name + "\n" +

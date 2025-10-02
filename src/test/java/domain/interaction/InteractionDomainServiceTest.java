@@ -37,15 +37,20 @@ class InteractionDomainServiceTest {
     @Test
     void whenAddInteractionWithExistingContact_thenSaveInteraction() throws IOException {
         // given
-        Mockito.when(contactRepository.find("sharib")).thenReturn(Optional.ofNullable(Contact.builder().nickName("sharib").build()));
-        service.add(Interaction.builder().contact("sharib").build());
+        Mockito.when(contactRepository.find("sharib")).thenReturn(Optional.ofNullable(Contact.builder().nickName("sharib").username("test_user").build()));
+        Interaction interaction = Interaction.builder()
+                .contact("sharib")
+                .username("test_user") // Added valid username
+                .build();
+
+        Mockito.when(interactionRepository.save(any(Interaction.class))).thenReturn(interaction);
 
         // when
-        Mockito.verify(interactionRepository).save(interactionCaptor.capture());
+        service.add(interaction);
 
         // then
-        Interaction interaction = interactionCaptor.getValue();
-        assertEquals("sharib", interaction.getContact());
+        Mockito.verify(interactionRepository).save(interactionCaptor.capture());
+        assertEquals("test_user", interactionCaptor.getValue().getUsername());
     }
 
     @Test

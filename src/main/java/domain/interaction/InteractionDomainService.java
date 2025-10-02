@@ -5,13 +5,17 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import domain.contact.ContactRepository;
 
+@Service
 public class InteractionDomainService {
 
     InteractionRepository interactionRepository;
     ContactRepository contactRepository;
 
+    @Autowired
     public InteractionDomainService(final InteractionRepository interactionRepository, final ContactRepository contactRepository) {
         this.interactionRepository = interactionRepository;
         this.contactRepository = contactRepository;

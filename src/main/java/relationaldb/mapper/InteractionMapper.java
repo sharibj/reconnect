@@ -26,6 +26,7 @@ public class InteractionMapper {
             .timeStamp(entity.getTimeStamp())
             .notes(entity.getNotes())
             .interactionDetails(details)
+            .username(entity.getUsername())
             .build();
     }
 
@@ -44,6 +45,7 @@ public class InteractionMapper {
         entity.setContact(model.getContact());
         entity.setTimeStamp(model.getTimeStamp());
         entity.setNotes(model.getNotes());
+        entity.setUsername(model.getUsername());
         
         if (model.getInteractionDetails() != null) {
             InteractionDetailsEntity detailsEntity = new InteractionDetailsEntity();

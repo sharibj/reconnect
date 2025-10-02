@@ -10,6 +10,7 @@ import domain.interaction.Interaction;
 import domain.interaction.InteractionDetails;
 import domain.interaction.InteractionType;
 import relationaldb.config.TestRelationalDbConfig;
+import spring.security.TenantContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +27,8 @@ class InteractionServiceTest {
 
     @BeforeEach
     void setUp() {
+        // Set up tenant context for multi-tenant tests
+        TenantContext.setCurrentTenant("test_user");
         // Clear any existing data
         interactionService.findAll().forEach(interaction -> interactionService.delete(interaction.getId()));
     }
@@ -33,17 +36,16 @@ class InteractionServiceTest {
     @Test
     void testSaveAndFindInteraction() {
         // Given
-        String id = UUID.randomUUID().toString();
         InteractionDetails details = new InteractionDetails();
         details.setSelfInitiated(true);
         details.setType(InteractionType.AUDIO_CALL);
 
         Interaction interaction = Interaction.builder()
-            .id(id)
             .contact("testContact")
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes")
             .interactionDetails(details)
+            .username("test_user")
             .build();
 
         // When
@@ -51,7 +53,8 @@ class InteractionServiceTest {
 
         // Then
         assertNotNull(savedInteraction);
-        Optional<Interaction> foundInteraction = interactionService.find(id);
+        assertNotNull(savedInteraction.getId()); // ID should be auto-generated
+        Optional<Interaction> foundInteraction = interactionService.find(savedInteraction.getId());
         assertTrue(foundInteraction.isPresent());
         assertEquals("testContact", foundInteraction.get().getContact());
         assertEquals("Test notes", foundInteraction.get().getNotes());
@@ -68,19 +71,19 @@ class InteractionServiceTest {
         details.setType(InteractionType.AUDIO_CALL);
 
         Interaction interaction1 = Interaction.builder()
-            .id(UUID.randomUUID().toString())
             .contact(contact)
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes 1")
             .interactionDetails(details)
+            .username("test_user")
             .build();
 
         Interaction interaction2 = Interaction.builder()
-            .id(UUID.randomUUID().toString())
             .contact(contact)
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes 2")
             .interactionDetails(details)
+            .username("test_user")
             .build();
 
         interactionService.save(interaction1);
@@ -97,27 +100,27 @@ class InteractionServiceTest {
     @Test
     void testDelete() {
         // Given
-        String id = UUID.randomUUID().toString();
         InteractionDetails details = new InteractionDetails();
         details.setSelfInitiated(true);
         details.setType(InteractionType.AUDIO_CALL);
 
         Interaction interaction = Interaction.builder()
-            .id(id)
             .contact("testContact")
             .timeStamp(System.currentTimeMillis())
             .notes("Test notes")
             .interactionDetails(details)
+            .username("test_user")
             .build();
 
-        interactionService.save(interaction);
+        Interaction savedInteraction = interactionService.save(interaction);
+        String savedId = savedInteraction.getId();
 
         // When
-        Interaction deletedInteraction = interactionService.delete(id);
+        Interaction deletedInteraction = interactionService.delete(savedId);
 
         // Then
         assertNotNull(deletedInteraction);
-        assertEquals(id, deletedInteraction.getId());
+        assertEquals(savedId, deletedInteraction.getId());
         assertTrue(interactionService.findAll().isEmpty());
     }
 }
