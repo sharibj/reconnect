@@ -20,6 +20,7 @@ public class InteractionEntity {
     
     
     private Long timeStamp;
+    @Column(columnDefinition = "TEXT")
     private String notes;
     
     @Embedded

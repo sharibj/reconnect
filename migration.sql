@@ -32,6 +32,9 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Update interactions notes column to support longer text
+ALTER TABLE interactions ALTER COLUMN notes TYPE TEXT;
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_contacts_username ON contacts(username);
 CREATE INDEX IF NOT EXISTS idx_groups_username ON groups(username);
