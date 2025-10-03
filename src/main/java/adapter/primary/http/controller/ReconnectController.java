@@ -165,6 +165,22 @@ public class ReconnectController {
         }
     }
 
+    @Operation(summary = "List all interactions")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved interactions")
+    })
+    @GetMapping("/interactions")
+    public ResponseEntity<List<InteractionDTO>> listAllInteractions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<InteractionDTO> allInteractions = interactionDomainService.getAll().stream()
+                .map(DomainMapper::toDTO)
+                .toList();
+        int start = page * size;
+        int end = Math.min(start + size, allInteractions.size());
+        return ResponseEntity.ok(allInteractions.subList(start, end));
+    }
+
     @Operation(summary = "Add a new interaction")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Interaction successfully added"),

@@ -301,4 +301,105 @@ public class TenantIsolationIntegrationTest {
         assertThat(t2Interactions.get(0).getNotes()).isEqualTo("Tenant 2 note");
         assertThat(t2Interactions.get(0).getTimeStamp()).isEqualTo(2000L);
     }
+
+    @Test
+    void testGetAllInteractions_ShouldReturnInteractionsPaginatedAndSortedByTimestamp() throws IOException {
+        // Test the new GET /interactions endpoint with pagination and sorting
+
+        TenantContext.setCurrentTenant(TENANT_1);
+
+        // Create a group and contact first
+        Group group = Group.builder().username(TENANT_1).name("test_group").frequencyInDays(7).build();
+        groupService.add(group);
+
+        Contact contact = Contact.builder().username(TENANT_1).nickName("test_contact").group("test_group").build();
+        contactService.add(contact);
+
+        // Create multiple interactions with different timestamps
+        long baseTime = System.currentTimeMillis();
+
+        Interaction interaction1 = Interaction.builder()
+                .username(TENANT_1)
+                .contact("test_contact")
+                .timeStamp(baseTime - 3000) // Oldest
+                .notes("First interaction")
+                .build();
+
+        Interaction interaction2 = Interaction.builder()
+                .username(TENANT_1)
+                .contact("test_contact")
+                .timeStamp(baseTime - 2000) // Middle
+                .notes("Second interaction")
+                .build();
+
+        Interaction interaction3 = Interaction.builder()
+                .username(TENANT_1)
+                .contact("test_contact")
+                .timeStamp(baseTime - 1000) // Newest
+                .notes("Third interaction")
+                .build();
+
+        interactionService.add(interaction1);
+        interactionService.add(interaction2);
+        interactionService.add(interaction3);
+
+        // Test that getAll() returns interactions sorted by timestamp descending (recent first)
+        List<Interaction> allInteractions = interactionService.getAll();
+
+        assertThat(allInteractions).hasSize(3);
+        assertThat(allInteractions.get(0).getNotes()).isEqualTo("Third interaction"); // Most recent first
+        assertThat(allInteractions.get(1).getNotes()).isEqualTo("Second interaction");
+        assertThat(allInteractions.get(2).getNotes()).isEqualTo("First interaction"); // Oldest last
+
+        // Verify timestamp ordering
+        assertThat(allInteractions.get(0).getTimeStamp()).isGreaterThan(allInteractions.get(1).getTimeStamp());
+        assertThat(allInteractions.get(1).getTimeStamp()).isGreaterThan(allInteractions.get(2).getTimeStamp());
+    }
+
+    @Test
+    void testGetAllInteractions_WithTenantIsolation_ShouldOnlyReturnCurrentTenantInteractions() throws IOException {
+        // Test that the new endpoint respects tenant isolation
+
+        // Setup data for tenant 1
+        TenantContext.setCurrentTenant(TENANT_1);
+        Group group1 = Group.builder().username(TENANT_1).name("group1").frequencyInDays(7).build();
+        groupService.add(group1);
+        Contact contact1 = Contact.builder().username(TENANT_1).nickName("contact1").group("group1").build();
+        contactService.add(contact1);
+
+        Interaction t1Interaction = Interaction.builder()
+                .username(TENANT_1)
+                .contact("contact1")
+                .notes("Tenant 1 interaction")
+                .build();
+        interactionService.add(t1Interaction);
+
+        // Setup data for tenant 2
+        TenantContext.setCurrentTenant(TENANT_2);
+        Group group2 = Group.builder().username(TENANT_2).name("group2").frequencyInDays(7).build();
+        groupService.add(group2);
+        Contact contact2 = Contact.builder().username(TENANT_2).nickName("contact2").group("group2").build();
+        contactService.add(contact2);
+
+        Interaction t2Interaction = Interaction.builder()
+                .username(TENANT_2)
+                .contact("contact2")
+                .notes("Tenant 2 interaction")
+                .build();
+        interactionService.add(t2Interaction);
+
+        // Verify tenant 1 only sees their interactions
+        TenantContext.setCurrentTenant(TENANT_1);
+        List<Interaction> tenant1Interactions = interactionService.getAll();
+        assertThat(tenant1Interactions).hasSize(1);
+        assertThat(tenant1Interactions.get(0).getNotes()).isEqualTo("Tenant 1 interaction");
+        assertThat(tenant1Interactions.get(0).getUsername()).isEqualTo(TENANT_1);
+
+        // Verify tenant 2 only sees their interactions
+        TenantContext.setCurrentTenant(TENANT_2);
+        List<Interaction> tenant2Interactions = interactionService.getAll();
+        assertThat(tenant2Interactions).hasSize(1);
+        assertThat(tenant2Interactions.get(0).getNotes()).isEqualTo("Tenant 2 interaction");
+        assertThat(tenant2Interactions.get(0).getUsername()).isEqualTo(TENANT_2);
+    }
 }
