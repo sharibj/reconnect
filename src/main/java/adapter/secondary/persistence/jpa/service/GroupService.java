@@ -26,8 +26,12 @@ public class GroupService implements GroupRepository {
 	
 	@Override
 	public Optional<Group> find(String name) {
-		return repository.findByName(name)
-				.map(mapper::toModel);
+		List<GroupEntity> entities = repository.findAllByName(name);
+		if (entities.isEmpty()) {
+			return Optional.empty();
+		}
+		// Return the first group if multiple exist with same name
+		return Optional.of(mapper.toModel(entities.get(0)));
 	}
 	
 	@Override
@@ -39,16 +43,30 @@ public class GroupService implements GroupRepository {
 	
 	@Override
 	public Group save(Group group) {
-		GroupEntity entity = mapper.toEntity(group);
+		// For updates (when duplicates exist), update the first matching group
+		List<GroupEntity> existingEntities = repository.findAllByName(group.getName());
+
+		GroupEntity entity;
+		if (!existingEntities.isEmpty()) {
+			// Update the first existing group
+			entity = existingEntities.get(0);
+			entity.setFrequencyInDays(group.getFrequencyInDays());
+		} else {
+			// Create new group
+			entity = mapper.toEntity(group);
+		}
+
 		return mapper.toModel(repository.save(entity));
 	}
 	
 	@Override
 	public Group delete(String name) {
-		Optional<GroupEntity> entity = repository.findByName(name);
-		if (entity.isPresent()) {
-			repository.delete(entity.get());
-			return mapper.toModel(entity.get());
+		List<GroupEntity> entities = repository.findAllByName(name);
+		if (!entities.isEmpty()) {
+			// Delete the first group if multiple exist with same name
+			GroupEntity entityToDelete = entities.get(0);
+			repository.delete(entityToDelete);
+			return mapper.toModel(entityToDelete);
 		}
 		return null;
 	}

@@ -59,7 +59,7 @@ public class GroupDomainService {
 		Group updatedGroup = group.toBuilder().name(group.getName().toLowerCase()).build();
         Group existingGroup = repository.find(updatedGroup.getName())
                 .orElseThrow(() -> new IOException("Group with name = " + updatedGroup.getName() + " does not exist."));
-        
+
         // Only save if the group has actually changed
         if (!existingGroup.equals(updatedGroup)) {
             repository.save(updatedGroup);
